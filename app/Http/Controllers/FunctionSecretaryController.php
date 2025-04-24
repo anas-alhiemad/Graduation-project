@@ -31,5 +31,5 @@ class FunctionSecretaryController extends Controller
     {
         return $this->trainerRegistrationService->register($request);
     }
-    
+
 }

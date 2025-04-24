@@ -21,4 +21,9 @@ class FunctionAdminController extends Controller
     {
         return $this->registrationSecretaryService->register($request);
     }
+
+    // public function AddEmployee(RegistrationSecretaryRequest $request) 
+    // {
+    //     return $this->registrationSecretaryService->register($request);
+    // }
 }

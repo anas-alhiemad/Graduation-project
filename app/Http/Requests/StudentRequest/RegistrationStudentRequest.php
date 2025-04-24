@@ -26,7 +26,7 @@ class RegistrationStudentRequest extends FormRequest
             'email' => 'required|string|email|max:100|unique:students',
             'password' => 'required|string|min:8',
             'phone' => 'required|string|regex:/^[0-9+\-\s()]*$/|min:10|max:12',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'birthday' => 'required|date|before:today|after:1980-01-01',
         ];
     }

@@ -13,7 +13,17 @@ class StudentRepository extends BaseRepository implements RepositoryInterface
         parent::__construct($model);
     }
 
+    public function getByEmail($email)
+    {
+        return $this->model->where('email', $email)->firstOrFail();
+    }
 
+    public function updatePassword($email,$password)
+    {
+        $recorde = $this->getByEmail($email);
+        $recorde->update(['password'=>$password]);
+        return true;
+    }
 
     public function storeFcmToken($user,$fcmToken)
     {

@@ -19,6 +19,7 @@ class Secretary extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
+    protected $table = 'secretaries';
     protected $fillable = ['name','email','password','photo','phone','birthday','fcm_token'];
 
     /**
