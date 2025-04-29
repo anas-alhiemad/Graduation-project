@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\FunctionSecretaryController;
+use App\Http\Controllers\DepartmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,11 @@ Route::group(['middleware' => 'api','prefix' => 'auth/admin'], function () {
 
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/secretary'], function () {
     Route::post('/registrationSecretary', [FunctionAdminController::class, 'RegistrationSecretary']);
+});
 
+// Department routes for admin
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
+    Route::apiResource('departments', DepartmentController::class);
 });
 
 ################################# STUDENT APIs ##########################
@@ -48,6 +53,12 @@ Route::group(['middleware' => 'api','prefix' => 'auth/student'], function () {
     Route::post('/refreshToken', [AuthStudentController::class, 'RefreshToken']);
     Route::get('/studentProfile', [AuthStudentController::class, 'GetStudentProfile']);
     Route::post('/verificationEmail', [AuthStudentController::class, 'VerificationEmail']);
+});
+
+// Department routes for students (read-only)
+Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student'], function () {
+    Route::get('/departments', [DepartmentController::class, 'index']);
+    Route::get('/departments/{id}', [DepartmentController::class, 'show']);
 });
 
 
