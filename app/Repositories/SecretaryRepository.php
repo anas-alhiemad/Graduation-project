@@ -14,7 +14,7 @@ class SecretaryRepository extends BaseRepository implements RepositoryInterface
 
     public function getByEmail($email)
     {
-        return $this->model->where('email', $email)->firstOrFail();
+        return $this->model->where('email', $email)->first();
     }
 
     public function updatePassword($email,$password)

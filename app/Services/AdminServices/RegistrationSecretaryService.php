@@ -3,26 +3,37 @@ namespace App\Services\AdminServices;
 
 use App\Mail\verificationEmail;
 use Illuminate\Support\Facades\Mail;
+use App\Repositories\EmployeeRepository;
 use App\Repositories\SecretaryRepository;
 
 class RegistrationSecretaryService 
 {
     protected $secretaryRepository;
+    protected $employeeRepository;
     
-    public function __construct(SecretaryRepository  $secretaryRepository)
+    public function __construct(SecretaryRepository  $secretaryRepository,EmployeeRepository $employeeRepository)
     {
         $this->secretaryRepository = $secretaryRepository;
+        $this->employeeRepository = $employeeRepository;
     }
 
     
     function store($request)
     {
+        $secretaryPhoto = null ;
+        if ($request->hasFile('photo')) {
+            $secretaryPhoto = 'upload/' . $request->file('photo')->store('employeePhoto', 'public_upload');
+        }
         $secretary = array_merge($request->validated(),
             ['password' => bcrypt($request->password),
-            'photo' => 'upload/'.$request->file('photo')->store('secretaryPhoto','public_upload')
+            'photo' => $secretaryPhoto
             ]);
 
-        $secretaryCreated = $this->secretaryRepository->create($secretary);    
+        $secretaryCreated = $this->secretaryRepository->create($secretary);
+        $secretaryInfo = $request->except('password');
+        $secretaryInfo['role'] = "secretary";
+        $secretaryInfo['photo'] = $secretaryPhoto;
+        $this->employeeRepository->create($secretaryInfo);
         return $secretaryCreated;
     }
 

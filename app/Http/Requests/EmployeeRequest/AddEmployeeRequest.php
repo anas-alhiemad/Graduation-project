@@ -23,10 +23,9 @@ class AddEmployeeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|between:2,30',
-            'email' => 'required|string|email|max:100|unique:trainers',
-            'password' => 'required|string|min:8',
+            'email' => 'required|string|email|max:100|unique:employees',
             'phone' => 'required|string|regex:/^[0-9+\-\s()]*$/|min:10|max:12',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'birthday' => 'required|date|before:today|after:1980-01-01',
             'gender'=> 'required|string',
             'role'=> 'required|string',

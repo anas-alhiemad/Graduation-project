@@ -14,12 +14,17 @@ abstract class BaseRepository
 
     public function getAll()
     {
-        return $this->model->all();
+        return $this->model->paginate(10);
     }
 
     public function getById($id)
     {
         return $this->model->findOrFail($id);
+    }
+
+    public function getId($id)
+    {
+        return $this->model->first('id',$id);
     }
 
     public function create(array $data)

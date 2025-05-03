@@ -31,4 +31,18 @@ class TrainerRepository extends BaseRepository implements RepositoryInterface
         return "done";
     }
 
+
+    public function search($search)
+    {
+       
+        $trainer = $this->model::query()
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->paginate(10);
+
+        return $trainer;
+    }
+
 }

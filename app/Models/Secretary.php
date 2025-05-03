@@ -20,7 +20,7 @@ class Secretary extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $table = 'secretaries';
-    protected $fillable = ['name','email','password','photo','phone','birthday','fcm_token'];
+    protected $fillable = ['name','email','password','photo','phone','birthday','fcm_token','gender'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -30,6 +30,9 @@ class Secretary extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'fcm_token',
+        'verification_token',
+        'email_verified_at'
     ];
 
     /**

@@ -28,9 +28,13 @@ class StudentRegistrationService
 
     function store($request)
     {
+        $studentPhoto = null;
+        if ($request->hasFile('photo')) {
+            $studentPhoto = 'upload/' . $request->file('photo')->store('studentPhoto', 'public_upload');
+        }
         $student = array_merge($request->validated(),
             ['password' => bcrypt($request->password),
-            'photo' => 'upload/'.$request->file('photo')->store('studentPhoto','public_upload')
+             'photo' => $studentPhoto
             ]);
 
         $studentCreated = $this->studentRepository->create($student);    
