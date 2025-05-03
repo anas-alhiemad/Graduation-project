@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string("phone");
-            $table->string("photo");
+            $table->string("photo")->nullable();
             $table->string("birthday");
             $table->string('fcm_token')->nullable();
             $table->string('verification_token')->nullable();

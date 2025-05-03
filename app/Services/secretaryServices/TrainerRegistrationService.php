@@ -28,9 +28,13 @@ class TrainerRegistrationService
 
     function store($request)
     {
+        $trainerPhoto = null;
+        if ($request->hasFile('photo')) {
+            $trainerPhoto = 'upload/' . $request->file('photo')->store('trainerPhoto', 'public_upload');
+        }
         $trainer = array_merge($request->validated(),
             ['password' => bcrypt($request->password),
-            'photo' => 'upload/'.$request->file('photo')->store('trainerPhoto','public_upload')
+            'photo' =>  $trainerPhoto
             ]);
 
         $trainerCreated = $this->trainerRepository->create($trainer);    

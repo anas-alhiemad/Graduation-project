@@ -2,9 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
+use App\Http\Controllers\CRUDStudentController;
+use App\Http\Controllers\CRUDTrainerController;
+use App\Http\Controllers\CRUDEmployeeController;
 use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
@@ -39,6 +43,16 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/secretary'
 // Department routes for admin
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
     Route::apiResource('departments', DepartmentController::class);
+});
+
+Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'admin/employee'], function () {
+    Route::post('/addEmployee', [CRUDEmployeeController::class, 'AddEmployee']);
+    Route::get('/showAllEmployees', [CRUDEmployeeController::class, 'ShowAllEmployees']);
+    Route::get('/showEmployeeById/{employeeId}', [CRUDEmployeeController::class, 'ShowEmployeeById']);
+    Route::post('/updateEmployee/{employeeId}', [CRUDEmployeeController::class, 'UpdateEmployee']);
+    Route::get('/searchEmployee/{querySearch}', [CRUDEmployeeController::class, 'SearchEmployee']);
+    Route::post('/deleteEmployee/{employeeId}', [CRUDEmployeeController::class, 'DeleteEmployee']);
+
 });
 
 ################################# STUDENT APIs ##########################
@@ -80,6 +94,26 @@ Route::group(['middleware' => 'api','prefix' => 'auth/secretary'], function () {
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary'], function () {
     Route::post('/student/registrationStudent', [FunctionSecretaryController::class, 'StudentRegistration']);
     Route::post('/trainer/trainerRegistration', [FunctionSecretaryController::class, 'TrainerRegistration']);
+
+});
+
+
+Route::group(['middleware' => ['api','auth:secretary,admin','transaction'],'prefix' => 'secretary/student'], function () {
+    Route::get('/showAllStudent', [CRUDStudentController::class, 'ShowAllStudent']);
+    Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
+    Route::post('/updateStudent/{studentId}', [CRUDStudentController::class, 'UpdateStudent']);
+    Route::get('/searchStudent/{querySearch}', [CRUDStudentController::class, 'SearchStudent']);
+    Route::post('/deleteStudent/{studentId}', [CRUDStudentController::class, 'DeleteStudent']);
+
+});
+
+
+Route::group(['middleware' => ['api','auth:secretary,admin','transaction'],'prefix' => 'secretary/trainer'], function () {
+    Route::get('/showAllTrainer', [CRUDTrainerController::class, 'ShowAllTrainer']);
+    Route::get('/showTrainerById/{trainerId}', [CRUDTrainerController::class, 'ShowTrainerById']);
+    Route::post('/updateTrainer/{trainerId}', [CRUDTrainerController::class, 'UpdateTrainer']);
+    Route::get('/searchTrainer/{querySearch}', [CRUDTrainerController::class, 'SearchTrainer']);
+    Route::post('/deleteTrainer/{trainerId}', [CRUDTrainerController::class, 'DeleteTrainer']);
 
 });
 

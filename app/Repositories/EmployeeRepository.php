@@ -11,4 +11,19 @@ class EmployeeRepository extends BaseRepository implements RepositoryInterface
     {
         parent::__construct($model);
     }
+
+
+    public function search($search)
+    {
+       
+        $employees = $this->model::query()
+            ->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('role', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            })
+            ->paginate(10);
+
+        return $employees;
+    }
 }

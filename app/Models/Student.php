@@ -29,6 +29,9 @@ class Student extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'fcm_token',
+        'verification_token',
+        'email_verified_at'
     ];
 
     /**

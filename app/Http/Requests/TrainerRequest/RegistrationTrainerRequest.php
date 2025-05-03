@@ -26,7 +26,7 @@ class RegistrationTrainerRequest extends FormRequest
             'email' => 'required|string|email|max:100|unique:trainers',
             'password' => 'required|string|min:8',
             'phone' => 'required|string|regex:/^[0-9+\-\s()]*$/|min:10|max:12',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'birthday' => 'required|date|before:today|after:1980-01-01',
             'gender'=> 'required|string',
             'specialization'=>'required|string',
