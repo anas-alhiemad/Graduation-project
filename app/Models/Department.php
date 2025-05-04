@@ -13,4 +13,10 @@ class Department extends Model
         'name',
         'photo'
     ];
+
+    // Relationship with Course
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
 } 
