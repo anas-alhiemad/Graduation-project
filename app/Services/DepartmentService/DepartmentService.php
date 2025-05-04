@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\AdminServices\Department;
+namespace App\Services\DepartmentService;
 
 use App\Repositories\DepartmentRepository;
 use Illuminate\Support\Facades\Validator;

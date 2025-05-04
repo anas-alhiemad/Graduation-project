@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\AdminServices\Department\DepartmentService;
+use App\Services\DepartmentService\DepartmentService;
 use App\Http\Requests\DepartmentRequest\DepartmentRequest;
 
 class DepartmentController extends Controller
