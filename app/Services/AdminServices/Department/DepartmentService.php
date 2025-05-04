@@ -18,12 +18,20 @@ class DepartmentService
 
     public function getAll()
     {
-        return $this->departmentRepository->getAll();
+        $departments = $this->departmentRepository->getAll();
+        return response()->json([
+            "message" => "All departments in the System.",
+            "departments" => $departments
+        ]);
     }
 
     public function getById($id)
     {
-        return $this->departmentRepository->getById($id);
+        $department = $this->departmentRepository->getById($id);
+        return response()->json([
+            "message" => "The department details.",
+            "department" => $department
+        ]);
     }
 
     public function create($request)
@@ -40,46 +48,44 @@ class DepartmentService
         $data = $request->validated();
         $data['photo'] = 'upload/' . $request->file('photo')->store('departmentPhoto', 'public_upload');
         
-        return $this->departmentRepository->create($data);
+        $department = $this->departmentRepository->create($data);
+        return response()->json([
+            "message" => "Department has been created successfully",
+            "department" => $department
+        ], 200);
     }
 
     public function update($id, $request)
     {
-        // Log the incoming request data
-        Log::info('Update Request Data:', [
-            'all' => $request->all(),
-            'validated' => $request->validated(),
-            'has_name' => $request->has('name'),
-            'name_value' => $request->input('name'),
-            'method' => $request->method()
-        ]);
-
-        // Get the current department
         $department = $this->departmentRepository->getById($id);
         
-        // Get validated data
+        if (!$department) {
+            return response()->json([
+                "message" => "Department not found"
+            ], 404);
+        }
+
         $data = $request->validated();
         
-        // Handle photo update if a new photo is provided
         if ($request->hasFile('photo')) {
-            // Delete old photo
-            if ($department->photo) {
-                Storage::disk('public_upload')->delete(str_replace('upload/', '', $department->photo));
+            if ($department->photo && file_exists(public_path($department->photo))) {
+                unlink(public_path($department->photo));
             }
             $data['photo'] = 'upload/' . $request->file('photo')->store('departmentPhoto', 'public_upload');
         }
-
-        // Log the final update data
-        Log::info('Final update data:', $data);
-
-        // Only update if there are changes
-        if (!empty($data)) {
-            $updated = $this->departmentRepository->update($id, $data);
-            Log::info('Update result:', ['updated' => $updated]);
-            return $updated;
+            
+        $updatedDepartment = $this->departmentRepository->update($id, $data);
+        
+        if (!$updatedDepartment) {
+            return response()->json([
+                "message" => "Failed to update department"
+            ], 500);
         }
 
-        return $department;
+        return response()->json([
+            "message" => "Department has been updated successfully",
+            "department" => $updatedDepartment
+        ], 200);
     }
 
     public function delete($id)
@@ -93,6 +99,10 @@ class DepartmentService
         }
         
         // Delete the department record
-        return $this->departmentRepository->delete($id);
+        $this->departmentRepository->delete($id);
+        
+        return response()->json([
+            'message' => 'Department has been deleted successfully'
+        ], 200);
     }
 } 

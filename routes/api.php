@@ -14,6 +14,7 @@ use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\FunctionSecretaryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\CourseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,6 +44,8 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/secretary'
 // Department routes for admin
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
     Route::apiResource('departments', DepartmentController::class);
+    Route::apiResource('courses', CourseController::class);
+    Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
 });
 
 Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'admin/employee'], function () {
@@ -73,6 +76,9 @@ Route::group(['middleware' => 'api','prefix' => 'auth/student'], function () {
 Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student'], function () {
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::get('/departments/{id}', [DepartmentController::class, 'show']);
+    Route::get('/courses', [CourseController::class, 'index']);
+    Route::get('/courses/{id}', [CourseController::class, 'show']);
+    Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
 });
 
 
@@ -90,6 +96,13 @@ Route::group(['middleware' => 'api','prefix' => 'auth/secretary'], function () {
     
 });
 
+
+Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'], function () {
+    Route::get('/departments', [DepartmentController::class, 'index']);
+    Route::get('/departments/{id}', [DepartmentController::class, 'show']);
+    Route::apiResource('courses', CourseController::class);
+    Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+});
 
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary'], function () {
     Route::post('/student/registrationStudent', [FunctionSecretaryController::class, 'StudentRegistration']);
@@ -128,57 +141,12 @@ Route::group(['middleware' => 'api','prefix' => 'auth/trainer'], function () {
     Route::post('/passwordReset',[ResetPasswordController::class,'PasswordReset']);
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Course routes for trainers (read-only)
+Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], function () {
+    Route::get('/courses', [CourseController::class, 'index']);
+    Route::get('/courses/{id}', [CourseController::class, 'show']);
+    Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
