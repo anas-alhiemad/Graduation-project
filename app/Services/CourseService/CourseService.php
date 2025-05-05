@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Services\AdminServices\Course;
+namespace App\Services\CourseService;
+;
 
 use App\Repositories\CourseRepository;
 use Illuminate\Support\Facades\Validator;
