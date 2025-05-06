@@ -22,10 +22,10 @@ class DisplayEmployeeService
     
     public function getEmployeeById($employeeId)
     {
-        $employees = $this->employeeRepository->getById($employeeId);
+        $employee = $this->employeeRepository->getById($employeeId);
         return response()->json([
             "message" => "the employee .",
-            "Employee" => $employees]);
+            "Employee" => $employee]);
     }
 
 
