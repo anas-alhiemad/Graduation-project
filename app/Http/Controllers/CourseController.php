@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\AdminServices\Course\CourseService;
+use App\Services\CourseService\CourseService;
 use App\Http\Requests\CourseRequest\CourseRequest;
 use App\Http\Requests\CourseRequest\CreateCourseRequest;
 

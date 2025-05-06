@@ -3,9 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\CourseController;
+
 use App\Http\Controllers\AuthAdminController;
-use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
 use App\Http\Controllers\CRUDStudentController;
@@ -16,6 +15,9 @@ use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\CRUDCourseSectionController;
 use App\Http\Controllers\FunctionSecretaryController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ComplaintController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +49,7 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], functio
     Route::apiResource('departments', DepartmentController::class);
     Route::apiResource('courses', CourseController::class);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+    Route::apiResource('complaints', ComplaintController::class);
 });
 
 Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'admin/employee'], function () {
@@ -80,6 +83,8 @@ Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student'], fun
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+    Route::get('/complaints', [ComplaintController::class, 'studentComplaints']);
+    Route::post('/complaints', [ComplaintController::class, 'store']);
 });
 
 
