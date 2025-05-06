@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\CRUDEmployeeController;
 use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\CRUDCourseSectionController;
 use App\Http\Controllers\FunctionSecretaryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CourseController;
@@ -115,7 +117,7 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 });
 
 
-Route::group(['middleware' => ['api','auth:secretary,admin','transaction'],'prefix' => 'secretary/student'], function () {
+Route::group(['middleware' => ['api','Auth_admin_or_secretary','transaction'],'prefix' => 'secretary/student'], function () {
     Route::get('/showAllStudent', [CRUDStudentController::class, 'ShowAllStudent']);
     Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
     Route::post('/updateStudent/{studentId}', [CRUDStudentController::class, 'UpdateStudent']);
@@ -125,7 +127,7 @@ Route::group(['middleware' => ['api','auth:secretary,admin','transaction'],'pref
 });
 
 
-Route::group(['middleware' => ['api','auth:secretary,admin','transaction'],'prefix' => 'secretary/trainer'], function () {
+Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/trainer'], function () {
     Route::get('/showAllTrainer', [CRUDTrainerController::class, 'ShowAllTrainer']);
     Route::get('/showTrainerById/{trainerId}', [CRUDTrainerController::class, 'ShowTrainerById']);
     Route::post('/updateTrainer/{trainerId}', [CRUDTrainerController::class, 'UpdateTrainer']);
@@ -134,6 +136,20 @@ Route::group(['middleware' => ['api','auth:secretary,admin','transaction'],'pref
 
 });
 
+
+Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/section'], function () {
+    Route::post('/createCourseSection', [CRUDCourseSectionController::class, 'CreateCourseSection']);
+    Route::post('/updateCourseSection/{sectionId}', [CRUDCourseSectionController::class, 'UpdateCourseSection']);
+    Route::post('/deleteCourseSection/{sectionId}', [CRUDCourseSectionController::class, 'DeleteCourseSection']);
+    Route::get('/showAllCourseSection/{courseId}', [CRUDCourseSectionController::class, 'ShowAllCourseSection']);
+    Route::get('/ShowByIdCourseSection/{sectionId}', [CRUDCourseSectionController::class, 'ShowByIdCourseSection']);
+    Route::post('/registerStudentToSection', [CRUDCourseSectionController::class, 'RegisterStudentToSection']);
+    Route::get('/getStudentsInSection/{sectionId}', [CRUDCourseSectionController::class, 'GetStudentsInSection']);
+    Route::post('/deleteStudentFromSection', [CRUDCourseSectionController::class, 'DeleteStudentFromSection']);
+    Route::post('/registerTrainerToSection', [CRUDCourseSectionController::class, 'RegisterTrainerToSection']);
+    Route::get('/getTrainersInSection/{sectionId}', [CRUDCourseSectionController::class, 'GetTrainersInSection']);
+    Route::post('/deleteTrainerFromSection', [CRUDCourseSectionController::class, 'DeleteTrainerFromSection']);
+});
 
 ################################## TRAINER APIs ########################################
 

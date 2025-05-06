@@ -32,4 +32,10 @@ class FunctionSecretaryController extends Controller
         return $this->trainerRegistrationService->register($request);
     }
 
+
+    public function registerStudentToSection($section_id, $student_id)
+    {
+        
+    }
+
 }
