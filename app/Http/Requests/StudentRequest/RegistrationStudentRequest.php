@@ -28,6 +28,7 @@ class RegistrationStudentRequest extends FormRequest
             'phone' => 'required|string|regex:/^[0-9+\-\s()]*$/|min:10|max:12',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'birthday' => 'required|date|before:today|after:1980-01-01',
+            'gender'=> 'required|string',
         ];
     }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string("phone");
             $table->string("photo")->nullable();
             $table->string("birthday");
+            $table->string("gender");
             $table->string('fcm_token')->nullable();
             $table->string('verification_token')->nullable();
             $table->timestamp('email_verified_at')->nullable();
