@@ -22,7 +22,8 @@ class SectionStudentService
     public function registerStudentToSection($request)
     {
         $sectionStudent =$request->all() ;
-        $sectionStudent ['status'] = true;
+        $sectionStudent ['is_confirmed'] = true;
+        $sectionStudent;
         $exists = $this->sectionStudentRepository->exists([
             'course_section_id' => $sectionStudent['course_section_id'],
             'student_id' => $sectionStudent['student_id']

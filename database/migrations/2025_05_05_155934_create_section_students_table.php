@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('course_section_id')->constrained('course_sections')->onDelete('cascade');
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->boolean('status')->default(false);
+            $table->boolean('is_confirmed')->default(false);
             $table->timestamps();
         });
     }
