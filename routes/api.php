@@ -18,6 +18,7 @@ use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\FunctionSecretaryController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,10 +47,14 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/secretary'
 
 // Department routes for admin
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
-    Route::apiResource('departments', DepartmentController::class);
-    Route::apiResource('courses', CourseController::class);
+    Route::apiResource('departments', DepartmentController::class)->except(['update']);
+    Route::post('departments/{id}', [DepartmentController::class, 'update']);
+    Route::apiResource('courses', CourseController::class)->except(['update']);
+    Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::apiResource('complaints', ComplaintController::class);
+    Route::apiResource('reports', ReportController::class)->except(['store', 'update']);
+    Route::get('reports/secretary/{secretaryId}', [ReportController::class, 'getBySecretary']);
 });
 
 Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'admin/employee'], function () {
@@ -113,8 +118,12 @@ Route::group(['middleware' => 'api','prefix' => 'auth/secretary'], function () {
 Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'], function () {
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::get('/departments/{id}', [DepartmentController::class, 'show']);
-    Route::apiResource('courses', CourseController::class);
+    Route::apiResource('courses', CourseController::class)->except(['update']);
+    Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+    Route::apiResource('reports', ReportController::class)->except(['index', 'destroy', 'update']);
+    Route::post('reports/{id}', [ReportController::class, 'update']);
+    Route::get('my-reports', [ReportController::class, 'getBySecretary']);
 });
 
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary'], function () {
