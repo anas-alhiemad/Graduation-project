@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class CourseSection extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','seatsOfNumber','startDate','endDate','courseId'];
+    protected $fillable = ['name','seatsOfNumber','reservedSeats','state','startDate','endDate','courseId'];
 
 
     public function course()
@@ -43,6 +43,7 @@ class CourseSection extends Model
     public function students()
     {
         return $this->belongsToMany(Student::class, 'section_students')
+                    ->withPivot('is_confirmed')
                     ->withTimestamps();
     }
     public function trainers()

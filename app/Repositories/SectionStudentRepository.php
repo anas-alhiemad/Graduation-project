@@ -19,8 +19,34 @@ class SectionStudentRepository extends BaseRepository implements RepositoryInter
     }
 
     public function exists(array $conditions)
-{
-    return $this->model::where($conditions)->exists();
-}
+    {
+        return $this->model::where($conditions)->exists();
+    }
+
+    public function confirm($reservationId)
+    {
+        $is_confirmed = true;
+        $this->model::where('id',$reservationId)->update( $is_confirmed);
+        return true;
+    }
+
+
+        public function showReservation($section_student_id) 
+        {
+            return $this->model
+                ->join('students', 'students.id', '=', 'section_students.student_id')
+                ->where('section_students.id', $section_student_id)        
+                ->select(
+                'section_students.*',
+                'students.name',
+                'students.email',
+                'students.phone',
+                'students.photo',
+                'students.birthday',
+                'students.gender',
+                'students.birthday'
+                )->first();
+        }
+
 
 }

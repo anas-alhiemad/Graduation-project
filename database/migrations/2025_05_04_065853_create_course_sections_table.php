@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('seatsOfNumber');
+            $table->integer('reservedSeats')->default(0);
             $table->enum('state', ['pending', 'in_progress', 'finished'])->default('pending');
             $table->date('startDate');
             $table->date('endDate');
