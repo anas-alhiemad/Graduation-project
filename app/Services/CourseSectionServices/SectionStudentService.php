@@ -21,21 +21,28 @@ class SectionStudentService
 
     public function registerStudentToSection($request)
     {
-        $sectionStudent =$request->all() ;
-        $sectionStudent ['is_confirmed'] = true;
-        $sectionStudent;
+        // $sectionStudent =$request->all() ;
+        $section = $this->courseSectionRepository->getById($request->course_section_id);
+
+        if ($section->reservedSeats >= $section->seatsOfNumber) {
+            return response()->json(['message' => 'No available seats'], 400);
+        }
+
         $exists = $this->sectionStudentRepository->exists([
-            'course_section_id' => $sectionStudent['course_section_id'],
-            'student_id' => $sectionStudent['student_id']
+            'course_section_id' => $request->course_section_id,
+            'student_id' => $request->student_id
         ]);
     
         if ($exists) {
             return response()->json(['message' => 'Student already registered in this section'], 409);
         }
-        
-        $this->sectionStudentRepository->create($sectionStudent);
+
+        $section->students()->attach($request->student_id, ['is_confirmed' => true]);        
+        $this->courseSectionRepository->incrementSeat($request->course_section_id);
         return response()->json(['message' => 'Student registered successfully']);
     }
+
+
 
     public function getStudentsInSection($section_id)
     {
@@ -45,11 +52,22 @@ class SectionStudentService
             'students' => $studentsInSection
         ]);
     }
+    
+    public function getStudentsInSectionConfirmed($section_id)
+    {
+        $studentsInSection = $this->courseSectionRepository->studentsInSectionConfirmed($section_id);
+        return response()->json([
+            'message' => "Student in section are Confirmed",
+            'students' => $studentsInSection
+        ]);
+    }
 
     public function deleteStudentFromSection($request)
     {
-       $this->sectionStudentRepository->removeStudentFromSection($request->course_section_id,$request->student_id) ;
-
+       $section = $this->courseSectionRepository->getById($request->course_section_id); 
+       $section->students()->detach($request->student_id);
+    //    $this->sectionStudentRepository->removeStudentFromSection($request->course_section_id,$request->student_id) ;
+       $this->courseSectionRepository->decrementSeat($request->course_section_id);
         return response()->json(['message' => 'Student removed from section']);
     }
 

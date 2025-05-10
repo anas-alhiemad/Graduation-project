@@ -3,21 +3,21 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\AuthAdminController;
+use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
 use App\Http\Controllers\CRUDStudentController;
 use App\Http\Controllers\CRUDTrainerController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\CRUDEmployeeController;
 use App\Http\Controllers\AuthSecretaryController;
+use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\CRUDCourseSectionController;
 use App\Http\Controllers\FunctionSecretaryController;
-use App\Http\Controllers\DepartmentController;
-use App\Http\Controllers\CourseController;
-use App\Http\Controllers\ComplaintController;
 
 /*
 |--------------------------------------------------------------------------
@@ -77,7 +77,7 @@ Route::group(['middleware' => 'api','prefix' => 'auth/student'], function () {
 });
 
 // Department routes for students (read-only)
-Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student'], function () {
+Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => 'student'], function () {
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::get('/departments/{id}', [DepartmentController::class, 'show']);
     Route::get('/courses', [CourseController::class, 'index']);
@@ -87,6 +87,13 @@ Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student'], fun
     Route::post('/complaints', [ComplaintController::class, 'store']);
 });
 
+
+
+
+Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student/reservation'], function () {
+    Route::post('/createReservation/{section_id}', [ReservationController::class, 'CreateReservation']);
+    Route::post('/cancelReservation/{reservation_id}', [ReservationController::class, 'CancelReservation']);
+});
 
 
 ################################## SECRETARY  APIs ########################################
@@ -138,18 +145,30 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 
 
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/section'], function () {
-    Route::post('/createCourseSection', [CRUDCourseSectionController::class, 'CreateCourseSection']);
-    Route::post('/updateCourseSection/{sectionId}', [CRUDCourseSectionController::class, 'UpdateCourseSection']);
-    Route::post('/deleteCourseSection/{sectionId}', [CRUDCourseSectionController::class, 'DeleteCourseSection']);
-    Route::get('/showAllCourseSection/{courseId}', [CRUDCourseSectionController::class, 'ShowAllCourseSection']);
-    Route::get('/ShowByIdCourseSection/{sectionId}', [CRUDCourseSectionController::class, 'ShowByIdCourseSection']);
-    Route::post('/registerStudentToSection', [CRUDCourseSectionController::class, 'RegisterStudentToSection']);
-    Route::get('/getStudentsInSection/{sectionId}', [CRUDCourseSectionController::class, 'GetStudentsInSection']);
-    Route::post('/deleteStudentFromSection', [CRUDCourseSectionController::class, 'DeleteStudentFromSection']);
-    Route::post('/registerTrainerToSection', [CRUDCourseSectionController::class, 'RegisterTrainerToSection']);
-    Route::get('/getTrainersInSection/{sectionId}', [CRUDCourseSectionController::class, 'GetTrainersInSection']);
-    Route::post('/deleteTrainerFromSection', [CRUDCourseSectionController::class, 'DeleteTrainerFromSection']);
+    Route::post('/createCourseSection', [CourseSectionController::class, 'CreateCourseSection']);
+    Route::post('/updateCourseSection/{sectionId}', [CourseSectionController::class, 'UpdateCourseSection']);
+    Route::post('/deleteCourseSection/{sectionId}', [CourseSectionController::class, 'DeleteCourseSection']);
+    Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
+    Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
+    Route::post('/registerStudentToSection', [CourseSectionController::class, 'RegisterStudentToSection']);
+    Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
+    Route::get('/getStudentsInSectionConfirmed/{sectionId}', [CourseSectionController::class, 'GetStudentsInSectionConfirmed']);
+    Route::post('/deleteStudentFromSection', [CourseSectionController::class, 'DeleteStudentFromSection']);
+    Route::post('/registerTrainerToSection', [CourseSectionController::class, 'RegisterTrainerToSection']);
+    Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
+    Route::post('/deleteTrainerFromSection', [CourseSectionController::class, 'DeleteTrainerFromSection']);
 });
+
+
+
+
+Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/reservation'], function () {
+    Route::post('/confirmReservation/{reservation_id}', [ReservationController::class, 'ConfirmReservation']);
+    Route::get('/showAllReservation/{section_id}', [ReservationController::class, 'ShowAllReservation']);
+    Route::get('/showReservation/{reservation_id}', [ReservationController::class, 'ShowReservation']);
+});
+
+
 
 ################################## TRAINER APIs ########################################
 

@@ -15,7 +15,7 @@ use App\Services\CourseSectionServices\DisplayCourseSectionService;
 use App\Http\Requests\CourseSectionRequest\CreateCourseSectionRequest;
 use App\Http\Requests\CourseSectionRequest\UpdateCourseSectionRequest;
 
-class CRUDCourseSectionController extends Controller
+class CourseSectionController extends Controller
 {
     protected $createCourseSectionService;
     protected $updatecourseSectionService;
@@ -62,6 +62,16 @@ class CRUDCourseSectionController extends Controller
     }
 
     public function GetStudentsInSection($section_id) 
+    {
+        return $this->sectionStudentService->getStudentsInSection($section_id);
+    }
+
+    public function GetStudentsInSectionConfirmed($section_id) 
+    {
+        return $this->sectionStudentService->getStudentsInSectionConfirmed($section_id);
+    }
+
+    public function GetStudentInSection($section_id) 
     {
         return $this->sectionStudentService->getStudentsInSection($section_id);
     }
