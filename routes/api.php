@@ -19,6 +19,7 @@ use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\FunctionSecretaryController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ForumController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,12 +50,21 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/secretary'
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
     Route::apiResource('departments', DepartmentController::class)->except(['update']);
     Route::post('departments/{id}', [DepartmentController::class, 'update']);
-    Route::apiResource('courses', CourseController::class)->except(['update']);
+    Route::apiResource('courses', CourseController::class)->except(['update'])->names([
+        'index' => 'admin.courses.index',
+        'store' => 'admin.courses.store',
+        'show' => 'admin.courses.show',
+        'destroy' => 'admin.courses.destroy'
+    ]);
     Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::apiResource('complaints', ComplaintController::class);
-    Route::apiResource('reports', ReportController::class)->except(['store', 'update']);
-    Route::get('reports/secretary/{secretaryId}', [ReportController::class, 'getBySecretary']);
+    Route::apiResource('reports', ReportController::class)->except(['store', 'update'])->names([
+        'index' => 'admin.reports.index',
+        'show' => 'admin.reports.show',
+        'destroy' => 'admin.reports.destroy'
+    ]);
+    Route::get('reports/secretary/{secretaryId}', [ReportController::class, 'getBySecretary'])->name('admin.reports.by-secretary');
 });
 
 Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'admin/employee'], function () {
@@ -118,12 +128,20 @@ Route::group(['middleware' => 'api','prefix' => 'auth/secretary'], function () {
 Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'], function () {
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::get('/departments/{id}', [DepartmentController::class, 'show']);
-    Route::apiResource('courses', CourseController::class)->except(['update']);
+    Route::apiResource('courses', CourseController::class)->except(['update'])->names([
+        'index' => 'secretary.courses.index',
+        'store' => 'secretary.courses.store',
+        'show' => 'secretary.courses.show',
+        'destroy' => 'secretary.courses.destroy'
+    ]);
     Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
-    Route::apiResource('reports', ReportController::class)->except(['index', 'destroy', 'update']);
-    Route::post('reports/{id}', [ReportController::class, 'update']);
-    Route::get('my-reports', [ReportController::class, 'getBySecretary']);
+    Route::apiResource('reports', ReportController::class)->except(['index', 'destroy', 'update'])->names([
+        'store' => 'secretary.reports.store',
+        'show' => 'secretary.reports.show'
+    ]);
+    Route::post('reports/{id}', [ReportController::class, 'update'])->name('secretary.reports.update');
+    Route::get('my-reports', [ReportController::class, 'getBySecretary'])->name('secretary.reports.my-reports');
 });
 
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary'], function () {
@@ -194,6 +212,26 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+});
+
+// Forum routes for students and trainers
+Route::group(['middleware' => ['api', 'auth:student,trainer'], 'prefix' => 'forum'], function () {
+    // Questions with stats
+    Route::get('sections/{section}/questions/stats', [ForumController::class, 'getQuestionsWithStats']);
+    
+    // Question likes
+    Route::get('questions/{question}/likes', [ForumController::class, 'getQuestionLikes']);
+    
+    // Answer likes
+    Route::get('questions/{question}/answer-likes', [ForumController::class, 'getAnswerLikes']);
+    
+    // Existing routes
+    Route::get('sections/{section}/questions', [ForumController::class, 'getSectionQuestions']);
+    Route::post('sections/{section}/questions', [ForumController::class, 'createQuestion']);
+    Route::post('questions/{question}/answers', [ForumController::class, 'createAnswer']);
+    Route::delete('questions/{question}', [ForumController::class, 'deleteQuestion']);
+    Route::post('questions/{question}/like', [ForumController::class, 'toggleLike']);
+    Route::post('answers/{answer}/accept', [ForumController::class, 'markAnswerAsAccepted']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
