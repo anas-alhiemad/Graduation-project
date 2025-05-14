@@ -14,7 +14,6 @@ class Course extends Model
         'name',
         'description',
         'photo',
-        'state',
         'department_id'
     ];
 

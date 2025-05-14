@@ -40,7 +40,6 @@ class CourseService
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'state' => 'required|in:not_start,in_progress,finished',
             'department_id' => 'required|exists:departments,id'
         ]);
 
@@ -68,13 +67,16 @@ class CourseService
             ], 404);
         }
 
-        // Debug the request data
-        \Log::info('Course Update Service Data:', [
-            'request_all' => $request->all(),
-            'validated_data' => $request->validated(),
-            'has_name' => $request->has('name'),
-            'name_value' => $request->input('name')
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'photo' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'department_id' => 'sometimes|required|exists:departments,id'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
 
         $data = $request->validated();
         

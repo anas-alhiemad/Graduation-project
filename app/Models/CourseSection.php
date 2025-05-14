@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\Trainer;
 use App\Models\WeekDay;
 use App\Models\CourseSectionWeekDay;
+use App\Models\ForumQuestion;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -52,7 +53,9 @@ class CourseSection extends Model
                     ->withTimestamps();
     }
 
-
-
+    public function questions()
+    {
+        return $this->hasMany(ForumQuestion::class, 'section_id');
+    }
 
 }
