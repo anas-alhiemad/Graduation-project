@@ -25,7 +25,7 @@ class CreateCourseRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'state' => 'required|in:not_start,in_progress,finished',
+          
             'department_id' => 'required|exists:departments,id'
         ];
     }

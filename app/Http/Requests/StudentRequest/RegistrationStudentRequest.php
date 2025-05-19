@@ -29,6 +29,8 @@ class RegistrationStudentRequest extends FormRequest
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'birthday' => 'required|date|before:today|after:1980-01-01',
             'gender'=> 'required|string',
+            'referrer_id' => 'nullable|exists:students,id',
+           
         ];
     }
 }
