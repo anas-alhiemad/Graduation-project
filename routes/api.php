@@ -20,6 +20,7 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\FunctionSecretaryController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ForumController;
+use App\Http\Controllers\PointsManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +66,14 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], functio
         'destroy' => 'admin.reports.destroy'
     ]);
     Route::get('reports/secretary/{secretaryId}', [ReportController::class, 'getBySecretary'])->name('admin.reports.by-secretary');
+
+    // Points Management Routes
+    Route::prefix('points')->group(function () {
+        Route::get('/top-students', [PointsManagementController::class, 'getTopStudents']);
+        Route::get('/top-secretaries', [PointsManagementController::class, 'getTopSecretaries']);
+        Route::post('/student/{studentId}', [PointsManagementController::class, 'updateStudentPoints']);
+        Route::post('/secretary/{secretaryId}', [PointsManagementController::class, 'updateSecretaryPoints']);
+    });
 });
 
 Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'admin/employee'], function () {
@@ -142,6 +151,7 @@ Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'],
     ]);
     Route::post('reports/{id}', [ReportController::class, 'update'])->name('secretary.reports.update');
     Route::get('my-reports', [ReportController::class, 'getBySecretary'])->name('secretary.reports.my-reports');
+   
 });
 
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary'], function () {
@@ -157,6 +167,7 @@ Route::group(['middleware' => ['api','Auth_admin_or_secretary','transaction'],'p
     Route::post('/updateStudent/{studentId}', [CRUDStudentController::class, 'UpdateStudent']);
     Route::get('/searchStudent/{querySearch}', [CRUDStudentController::class, 'SearchStudent']);
     Route::post('/deleteStudent/{studentId}', [CRUDStudentController::class, 'DeleteStudent']);
+     
 
 });
 
