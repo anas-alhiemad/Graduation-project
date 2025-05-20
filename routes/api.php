@@ -49,11 +49,11 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/secretary'
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
     Route::apiResource('departments', DepartmentController::class)->except(['update']);
     Route::post('departments/{id}', [DepartmentController::class, 'update']);
-    Route::apiResource('courses', CourseController::class)->except(['update']);
+//    Route::apiResource('courses', CourseController::class)->except(['update']);
     Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::apiResource('complaints', ComplaintController::class);
-    Route::apiResource('reports', ReportController::class)->except(['store', 'update']);
+//    Route::apiResource('reports', ReportController::class)->except(['store', 'update']);
     Route::get('reports/secretary/{secretaryId}', [ReportController::class, 'getBySecretary']);
 });
 
@@ -157,8 +157,6 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
     Route::post('/createCourseSection', [CourseSectionController::class, 'CreateCourseSection']);
     Route::post('/updateCourseSection/{sectionId}', [CourseSectionController::class, 'UpdateCourseSection']);
     Route::post('/deleteCourseSection/{sectionId}', [CourseSectionController::class, 'DeleteCourseSection']);
-    Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
-    Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
     Route::post('/registerStudentToSection', [CourseSectionController::class, 'RegisterStudentToSection']);
     Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
     Route::get('/getStudentsInSectionConfirmed/{sectionId}', [CourseSectionController::class, 'GetStudentsInSectionConfirmed']);
@@ -169,6 +167,11 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 });
 
 
+Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'secretary/student'], function () {
+    Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
+    Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
+
+});
 
 
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/reservation'], function () {
