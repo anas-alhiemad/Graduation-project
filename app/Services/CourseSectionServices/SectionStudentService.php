@@ -71,5 +71,12 @@ class SectionStudentService
         return response()->json(['message' => 'Student removed from section']);
     }
 
-
+    public function getStudentCourses($studentId)
+    {
+        $courses = $this->courseSectionRepository->getStudentCourses($studentId);
+        return response()->json([
+            'message' => "Courses that student is enrolled in",
+            'courses' => $courses
+        ]);
+    }
 }

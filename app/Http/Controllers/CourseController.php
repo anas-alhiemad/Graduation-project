@@ -45,4 +45,8 @@ class CourseController extends Controller
     {
         return $this->courseService->search($query);
     }
+     public function getByDepartment($departmentId)
+    {
+        return $this->courseService->getByDepartment($departmentId);
+    }
 } 
