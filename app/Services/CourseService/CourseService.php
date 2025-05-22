@@ -124,4 +124,13 @@ class CourseService
             "courses" => $courses
         ]);
     }
+
+    public function getByDepartment($departmentId)
+    {
+        $courses = $this->courseRepository->getByDepartment($departmentId);
+        return response()->json([
+            "message" => "Courses in the department",
+            "courses" => $courses
+        ]);
+    }
 } 

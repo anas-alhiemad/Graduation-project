@@ -100,6 +100,9 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], functio
     ]);
     Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+    //Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
+    Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
+
 });
 
 // Admin Complaint Management
@@ -159,6 +162,8 @@ Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => '
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+    Route::get('/my-courses', [CourseSectionController::class, 'getStudentCourses']);
+    Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
 });
 
 // Student Complaint Management
@@ -192,6 +197,10 @@ Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'],
     ]);
     Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+   // Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
+  Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
+
+
 });
 
 // Secretary Report Management
@@ -267,6 +276,8 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+    Route::get('/my-courses', [CourseSectionController::class, 'getTrainerCourses']);
+    Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
 });
 
 ################################# FILE ROUTES ##########################
@@ -300,19 +311,24 @@ Route::group(['middleware' => ['api', 'auth:student,trainer'], 'prefix' => 'foru
 
 ################################# EXAM GRADES ROUTES ##########################
 
-// Exam Grades Management
-Route::group(['middleware' => 'api', 'prefix' => 'exam-grades'], function () {
+// Exam Grades Management - Trainer Routes
+Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'exam-grades'], function () {
     Route::get('/', [ExamGradeController::class, 'index']);
     Route::post('/', [ExamGradeController::class, 'store']);
     Route::get('/{id}', [ExamGradeController::class, 'show']);
     Route::put('/{id}', [ExamGradeController::class, 'update']);
     Route::delete('/{id}', [ExamGradeController::class, 'destroy']);
     
-    // Helper routes
-    Route::get('/student/{studentId}', [ExamGradeController::class, 'getStudentGrades']);
+    // Helper routes for trainers
     Route::get('/section/{sectionId}', [ExamGradeController::class, 'getSectionGrades']);
     Route::get('/trainer/{trainerId}', [ExamGradeController::class, 'getTrainerGrades']);
     Route::get('/section/{sectionId}/statistics', [ExamGradeController::class, 'getSectionStatistics']);
+    Route::get('/student/{studentId}', [ExamGradeController::class, 'getStudentGrades']);
+});
+
+// Exam Grades Management - Student Routes
+Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'grades'], function () {
+    Route::get('/my-grades', [ExamGradeController::class, 'getMyGrades']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

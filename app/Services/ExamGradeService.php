@@ -56,6 +56,12 @@ class ExamGradeService
 
     public function getStudentGrades(int $studentId): Collection
     {
+        // Check if the authenticated user is the student or a trainer
+        $authUser = auth()->user();
+        if ($authUser->id !== $studentId && !$authUser->hasRole('trainer')) {
+            throw new \InvalidArgumentException('Unauthorized access to student grades');
+        }
+
         return ExamGrade::with(['section', 'trainer'])
             ->where('student_id', $studentId)
             ->get();

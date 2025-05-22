@@ -98,7 +98,15 @@ class CourseSectionController extends Controller
         return $this->sectionTrainerService->deleteTrainerFromSection($request);
     }
 
-    
+    public function getStudentCourses()
+    {
+        $studentId = auth()->user()->id;
+        return $this->sectionStudentService->getStudentCourses($studentId);
+    }
 
-
+    public function getTrainerCourses()
+    {
+        $trainerId = auth()->user()->id;
+        return $this->sectionTrainerService->getTrainerCourses($trainerId);
+    }
 }

@@ -72,8 +72,31 @@ class ExamGradeController extends Controller
     public function getStudentGrades($studentId): JsonResponse
     {
         try {
-            $grades = $this->examGradeService->getStudentGrades($studentId);
+            //   For students, ensure they can only access their own grades
+            if (auth()->user()->hasRole('student') && auth()->user()->id != $studentId) {
+                return response()->json(['message' => 'Unauthorized access to student grades'], 403);
+            }
+
+            $grades = $this->examGradeService->getStudentGrades(1);
             return response()->json(['data' => $grades]);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getMyGrades(): JsonResponse
+    {
+        try {
+           
+
+            $studentId = auth()->user()->id;
+            $grades = $this->examGradeService->getStudentGrades($studentId);
+            return response()->json([
+                'message' => 'Your exam grades retrieved successfully',
+                'data' => $grades
+            ]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }

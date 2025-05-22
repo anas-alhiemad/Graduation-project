@@ -53,4 +53,18 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
        return $this->model::where('id',$section_id)->with('trainers')->get();
     }
 
+    public function getStudentCourses($studentId)
+    {
+        return $this->model::whereHas('students', function($query) use ($studentId) {
+            $query->where('student_id', $studentId)
+                  ->where('is_confirmed', true);
+        })->with(['course', 'weekDays'])->get();
+    }
+
+    public function getTrainerCourses($trainerId)
+    {
+        return $this->model::whereHas('trainers', function($query) use ($trainerId) {
+            $query->where('trainer_id', $trainerId);
+        })->with(['course', 'weekDays'])->get();
+    }
 }
