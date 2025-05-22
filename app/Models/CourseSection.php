@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Student;
 use App\Models\Trainer;
 use App\Models\WeekDay;
+use App\Models\Section_File;
 use App\Models\CourseSectionWeekDay;
 use App\Models\ForumQuestion;
 use Illuminate\Database\Eloquent\Model;
@@ -53,9 +54,15 @@ class CourseSection extends Model
                     ->withTimestamps();
     }
 
+
+    public function section_File()
+    {
+        return $this->hasMany(Section_File::class,'course_section_id');}
+
     public function questions()
     {
         return $this->hasMany(ForumQuestion::class, 'section_id');
+
     }
 
 }

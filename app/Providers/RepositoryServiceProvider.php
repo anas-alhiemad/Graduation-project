@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Repositories\FileRepository;
 use App\Repositories\CourseRepository;
 use App\Interfaces\RepositoryInterface;
 use App\Repositories\StudentRepository;
@@ -36,6 +37,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RepositoryInterface::class, PasswordResetRepository::class);
         $this->app->bind(RepositoryInterface::class, SectionStudentRepository::class);
         $this->app->bind(RepositoryInterface::class, SectionTrainerRepository::class);
+        $this->app->bind(RepositoryInterface::class, FileRepository::class);
     }
 
     /**

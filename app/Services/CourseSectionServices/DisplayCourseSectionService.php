@@ -15,11 +15,11 @@ class DisplayCourseSectionService
 
     public function indexSection($courseID)
     {
-        $sections = $this->courseSectionRepository->getAllByCourseId($courseID)->load('weekDays');
+      return  $sections = $this->courseSectionRepository->getAllByCourseId($courseID);
 
         $formatted = $sections->map(function ($section) {
             return $section->only([
-                'id', 'name', 'seatsOfNumber', 'startDate', 'endDate','state','courseId', 'created_at', 'updated_at'
+                'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state','courseId', 'created_at', 'updated_at'
             ]) + [
                 'week_days' => $section->formatted_week_days,
             ];
@@ -40,7 +40,7 @@ class DisplayCourseSectionService
         return response()->json([
             "message" => "The section in course.",
             "section" => $section->only([
-                'id', 'name', 'seatsOfNumber', 'startDate', 'endDate','state','courseId', 'created_at', 'updated_at'
+                'id', 'name', 'seatsOfNumber', 'startDate','reservedSeats', 'endDate','state','courseId', 'created_at', 'updated_at'
             ]) + [
                 'week_days' => $section->formatted_week_days,
             ],
