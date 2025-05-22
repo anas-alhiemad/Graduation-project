@@ -47,4 +47,11 @@ class CourseRepository extends BaseRepository implements RepositoryInterface
     {
         return $this->model::destroy($id);
     }
+    public function getByDepartment($departmentId)
+{
+    return $this->model::with('department')
+                ->where('department_id', $departmentId)
+                ->get();
+}
+
 } 

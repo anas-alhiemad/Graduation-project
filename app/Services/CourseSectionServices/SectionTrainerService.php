@@ -51,9 +51,15 @@ class SectionTrainerService
     public function deleteTrainerFromSection($request)
     {
        $this->sectionTrainerRepository->removeTrainerFromSection($request->course_section_id,$request->trainer_id) ;
-
         return response()->json(['message' => 'Trainer removed from section']);
     }
 
-
+    public function getTrainerCourses($trainerId)
+    {
+        $courses = $this->courseSectionRepository->getTrainerCourses($trainerId);
+        return response()->json([
+            'message' => "Courses that trainer teaches",
+            'courses' => $courses
+        ]);
+    }
 }
