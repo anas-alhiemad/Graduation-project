@@ -14,7 +14,7 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
 
     public function getAllByCourseId($courseId)
     {
-        return $this->model->where('courseId',$courseId)->paginate(10);
+        return $this->model->with('weekDays')->where('courseId',$courseId)->paginate(10);
     }
 
     public function incrementSeat($course_section_id)
