@@ -32,12 +32,25 @@ class StudentRegistrationService
         if ($request->hasFile('photo')) {
             $studentPhoto = 'upload/' . $request->file('photo')->store('studentPhoto', 'public_upload');
         }
+        
         $student = array_merge($request->validated(),
             ['password' => bcrypt($request->password),
-             'photo' => $studentPhoto
+             'photo' => $studentPhoto,
+             'points' => 3 // Initial points for new registration
             ]);
 
+
         $studentCreated = $this->studentRepository->create($student);    
+
+        // If there's a referrer, add points to them
+        if ($request->has('referrer_id')) {
+            $referrer = $this->studentRepository->getById($request->referrer_id);
+            if ($referrer) {
+                $referrer->points += 3;
+                $referrer->save();
+            }
+        }
+
         return $studentCreated;
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->string('file');
-        //    $table->foreignId('secretary_id')->constrained('secretaries')->onDelete('cascade');
+           $table->foreignId('secretary_id')->constrained('secretaries')->onDelete('cascade');
             $table->timestamps();
         });
     }

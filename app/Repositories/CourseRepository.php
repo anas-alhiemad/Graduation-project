@@ -30,4 +30,21 @@ class CourseRepository extends BaseRepository implements RepositoryInterface
     {
         return $this->model::with('department')->paginate(10);
     }
+
+    public function create(array $data)
+    {
+        return $this->model::create($data);
+    }
+
+    public function update($id, array $data)
+    {
+        $course = $this->getById($id);
+        $course->update($data);
+        return $course;
+    }
+
+    public function delete($id)
+    {
+        return $this->model::destroy($id);
+    }
 } 
