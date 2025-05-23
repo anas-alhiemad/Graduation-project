@@ -278,6 +278,7 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::get('/my-courses', [CourseSectionController::class, 'getTrainerCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
+
 });
 
 ################################# FILE ROUTES ##########################
@@ -292,6 +293,7 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/file']
 Route::group(['middleware' =>'api','prefix' => 'file'], function () {
    Route::get('/showAllFileInSection/{course_section_id}', [FileController::class, 'ShowAllFileInSection']);
    Route::get('/showFileById/{file_Id}', [FileController::class, 'ShowFileById']);
+
 });
 
 ################################# FORUM ROUTES ##########################
