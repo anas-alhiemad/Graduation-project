@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Section_File extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','file_path','course_section_id'];
+    protected $fillable = ['file_name','file_path','course_section_id'];
 
     public function courseSection()
     {
