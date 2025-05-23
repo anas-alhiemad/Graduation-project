@@ -3,9 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\AdController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\GiftController;
+use App\Http\Controllers\ForumController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\ExamGradeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
@@ -17,13 +23,8 @@ use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\FunctionSecretaryController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ForumController;
 use App\Http\Controllers\PointsManagementController;
-use App\Http\Controllers\GiftController;
-use App\Http\Controllers\AdController;
-use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\FunctionSecretaryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -266,6 +267,20 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
+});
+
+################################# FILE ROUTES ##########################
+
+//  
+Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/file'], function () {
+   Route::post('/uploadFile', [FileController::class, 'UploadFile']);
+   Route::post('/updateFile', [FileController::class, 'UpdateFile']);
+   Route::post('/deleteFile/{file_Id}', [FileController::class, 'DeleteFile']);
+});
+
+Route::group(['middleware' =>'api','prefix' => 'file'], function () {
+   Route::get('/showAllFileInSection/{course_section_id}', [FileController::class, 'ShowAllFileInSection']);
+   Route::get('/showFileById/{file_Id}', [FileController::class, 'ShowFileById']);
 });
 
 ################################# FORUM ROUTES ##########################

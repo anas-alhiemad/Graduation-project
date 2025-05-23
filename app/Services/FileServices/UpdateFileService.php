@@ -1,12 +1,13 @@
 <?php
 namespace App\Services\FileServices;
 
+use Illuminate\Support\Facades\Storage;
 use App\Repositories\FileRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Repositories\CourseSectionRepository;
 
-class UploadFileService 
+class UpdateFileService 
 {
     protected $fileRepository;
     protected $courseSectionRepository;
@@ -18,30 +19,32 @@ class UploadFileService
 
     }
 
-    public function  store($request) 
+    public function updateFile($request) 
     {
-        
+        $fileRecord = $this->fileRepository->getById($request->file_Id);
         $section = $this->courseSectionRepository->getById($request->course_section_id);
         $trainer = Auth::guard('trainer')->user();
 
         if (Gate::forUser($trainer)->denies('upload', $section)) {
-            abort(403, 'Unauthorized to upload file to this section.');
+            abort(403, 'Unauthorized to update this file to this section.');
         }
 
-        // if (Gate::denies('upload', $section)) {
-        //     abort(403, 'Unauthorized to upload file to this section.');}
+        if ($fileRecord->file_path && file_exists(public_path($fileRecord->file_path))) {
+            unlink(public_path($fileRecord->file_path));
+        }
 
-
+        
         $path = 'upload/' . $request->file('file')->store('section_file', 'public_upload');
         $file_name = $request->file('file')->getClientOriginalName();    
         $data_file = ["file_name" => $file_name ,"file_path" => $path,"course_section_id" =>$request->course_section_id];
-        
-        $file = $this->fileRepository->create($data_file);
 
+        $file = $this->fileRepository->update($request->file_Id,$data_file);
+        
         return response()->json([
-            "message" => "File has been uploaded successfuly ",
+            "message" => "File has been updated successfuly ",
             "file" => $file],200);
     }
 
-    
+
+
 }

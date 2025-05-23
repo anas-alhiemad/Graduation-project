@@ -4,7 +4,7 @@ namespace App\Http\Requests\FileRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UploadFileRequest extends FormRequest
+class UpdateFileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,7 @@ class UploadFileRequest extends FormRequest
     {
         return [
             'course_section_id' => 'integer|exists:course_sections,id',
+            'file_Id'           => 'integer|exists:section__files,id',
             'file'             => 'required|file'
         ];
     }

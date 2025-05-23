@@ -58,7 +58,7 @@ class Trainer extends Authenticatable implements JWTSubject
     
     public function sections()
     {
-        return $this->belongsToMany(CourseSection::class, 'section_student')
+        return $this->belongsToMany(CourseSection::class, 'section_trainers')
                     ->withTimestamps();
     }
 }
