@@ -72,4 +72,9 @@ class AdController extends Controller
     {
         return $this->adService->deleteAd($id);
     }
+
+    public function active(): JsonResponse
+    {
+        return $this->adService->getActiveAds();
+    }
 } 

@@ -128,7 +128,20 @@ class ForumController extends Controller
     {
         try {
             $this->forumService->markAnswerAsAccepted($answer);
-            return response()->json(['message' => 'Answer marked as accepted']);
+            return response()->json(['message' => 'Answer status updated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 403);
+        }
+    }
+
+    public function toggleAnswerLike(ForumAnswer $answer): JsonResponse
+    {
+        try {
+            $user_id = Auth::id();
+            $user_type = Auth::user() instanceof \App\Models\Trainer ? 'trainer' : 'student';
+            
+            $isLiked = $this->forumService->toggleAnswerLike($answer, $user_id, $user_type);
+            return response()->json(['is_liked' => $isLiked]);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 403);
         }

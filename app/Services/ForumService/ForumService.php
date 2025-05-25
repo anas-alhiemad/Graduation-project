@@ -66,24 +66,30 @@ class ForumService
         }
 
         $this->checkSectionAccess($question->section);
-        return $question->likes()
-            ->select('user_id', 'user_type', 'created_at')
-            ->get();
+       return $question->likes()
+    ->select('forum_question_likes.user_id', 'forum_question_likes.user_type', 'forum_question_likes.created_at')
+    ->get();
+
     }
 
-    public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\Eloquent\Collection
-    {
-        if (!$question) {
-            throw new \Exception('Question not found');
-        }
-
-        $this->checkSectionAccess($question->section);
-        return $question->answers()
-            ->with('likes')
-            ->get()
-            ->pluck('likes')
-            ->flatten();
+public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\Eloquent\Collection
+{
+    if (!$question) {
+        throw new \Exception('Question not found');
     }
+
+    $this->checkSectionAccess($question->section);
+
+ 
+    $likes = $question->answers()
+        ->with('likes')
+        ->get()
+        ->flatMap(function ($answer) {
+            return $answer->likes;
+        });
+
+    return new \Illuminate\Database\Eloquent\Collection($likes);
+}
 
     public function createQuestion(array $data): ForumQuestion
     {
@@ -169,6 +175,18 @@ class ForumService
 
         $this->checkSectionAccess($answer->question->section);
         
+        $user = Auth::user();
+        if (!($user instanceof \App\Models\Trainer)) {
+            throw new \Exception('Only trainers can mark answers as accepted');
+        }
+
+        // If answer is already accepted, unaccept it
+        if ($answer->is_accepted) {
+            $answer->update(['is_accepted' => false]);
+            $answer->question->update(['is_resolved' => false]);
+            return;
+        }
+
         // First, unmark any previously accepted answers for this question
         ForumAnswer::where('question_id', $answer->question_id)
             ->where('is_accepted', true)
@@ -188,5 +206,27 @@ class ForumService
             ->with(['answers', 'likes'])
             ->latest()
             ->get();
+    }
+
+    public function toggleAnswerLike(ForumAnswer $answer, int $user_id, string $user_type): bool
+    {
+        if (!$answer) {
+            throw new \Exception('Answer not found');
+        }
+
+        $this->checkSectionAccess($answer->question->section);
+        
+        $user = Auth::user();
+        $userType = $user instanceof \App\Models\Trainer ? 'trainer' : 'student';
+        
+        if ($answer->likes()
+            ->where('forum_answer_likes.user_id', $user->id)
+            ->where('forum_answer_likes.user_type', $userType)
+            ->exists()) {
+            $answer->likes()->detach($user->id, ['user_type' => $userType]);
+            return false;
+        }
+        $answer->likes()->attach($user->id, ['user_type' => $userType]);
+        return true;
     }
 } 

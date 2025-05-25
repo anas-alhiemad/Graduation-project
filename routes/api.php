@@ -3,9 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\AdController;
+use App\Http\Controllers\FileController;
+use App\Http\Controllers\GiftController;
+use App\Http\Controllers\ForumController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\ExamGradeController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
@@ -17,13 +23,12 @@ use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
-use App\Http\Controllers\FunctionSecretaryController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ForumController;
 use App\Http\Controllers\PointsManagementController;
-use App\Http\Controllers\GiftController;
-use App\Http\Controllers\AdController;
-use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\FunctionSecretaryController;
+use App\Http\Controllers\DisplayStudentService;
+use App\Http\Controllers\DisplaySecretaryService;
+use App\Http\Controllers\StudentPointsController;
+use App\Http\Controllers\SecretaryPointsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -163,6 +168,7 @@ Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => '
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::get('/my-courses', [CourseSectionController::class, 'getStudentCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
+    Route::get('/points', [StudentPointsController::class, 'getPoints']);
 });
 
 // Student Complaint Management
@@ -174,6 +180,7 @@ Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => '
 // Student Gift Access
 Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => 'student'], function () {
     Route::get('/gifts', [GiftController::class, 'studentGifts']);
+    Route::get('/ads/active', [AdController::class, 'active']);
 });
 
 // Student Reservation Management
@@ -196,10 +203,8 @@ Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'],
     ]);
     Route::post('courses/{id}', [CourseController::class, 'update']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
-   // Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
-  Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
-
-
+    Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
+    Route::get('/points', [SecretaryPointsController::class, 'getPoints']);
 });
 
 // Secretary Report Management
@@ -277,6 +282,22 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::get('/my-courses', [CourseSectionController::class, 'getTrainerCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
+
+});
+
+################################# FILE ROUTES ##########################
+
+//  
+Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/file'], function () {
+   Route::post('/uploadFile', [FileController::class, 'UploadFile']);
+   Route::post('/updateFile', [FileController::class, 'UpdateFile']);
+   Route::post('/deleteFile/{file_Id}', [FileController::class, 'DeleteFile']);
+});
+
+Route::group(['middleware' =>'api','prefix' => 'file'], function () {
+   Route::get('/showAllFileInSection/{course_section_id}', [FileController::class, 'ShowAllFileInSection']);
+   Route::get('/showFileById/{file_Id}', [FileController::class, 'ShowFileById']);
+
 });
 
 ################################# FORUM ROUTES ##########################
@@ -291,6 +312,7 @@ Route::group(['middleware' => ['api', 'auth:student,trainer'], 'prefix' => 'foru
     Route::post('questions/{question}/answers', [ForumController::class, 'createAnswer']);
     Route::delete('questions/{question}', [ForumController::class, 'deleteQuestion']);
     Route::post('questions/{question}/like', [ForumController::class, 'toggleLike']);
+    Route::post('answers/{answer}/like', [ForumController::class, 'toggleAnswerLike']);
     Route::post('answers/{answer}/accept', [ForumController::class, 'markAnswerAsAccepted']);
 });
 

@@ -31,4 +31,9 @@ class SecretaryRepository extends BaseRepository implements RepositoryInterface
         $secretary->save();
         return "done";
     }
+
+    public function getPoints($secretaryId)
+    {
+        return $this->model->where('id', $secretaryId)->value('points');
+    }
 }

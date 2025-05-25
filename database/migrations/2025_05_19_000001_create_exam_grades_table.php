@@ -33,9 +33,6 @@ return new class extends Migration
                   ->references('id')
                   ->on('trainers')
                   ->onDelete('cascade');
-
-            // Add unique constraint
-            $table->unique(['student_id', 'section_id']);
         });
     }
 
