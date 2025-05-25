@@ -38,4 +38,13 @@ class AdRepository extends BaseRepository implements RepositoryInterface
     {
         return $this->model->destroy($id);
     }
+
+    public function getActiveAds()
+    {
+        return $this->model
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+    }
 } 

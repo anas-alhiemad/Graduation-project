@@ -46,5 +46,10 @@ class StudentRepository extends BaseRepository implements RepositoryInterface
 
         return $students;
     }
+
+    public function getPoints($studentId)
+    {
+        return $this->model->where('id', $studentId)->value('points');
+    }
   
 }

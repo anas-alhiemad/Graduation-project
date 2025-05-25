@@ -31,10 +31,16 @@ class DisplayStudentService
 
     public function searchStudent($request)
     {
-
         $students = $this->studentRepository->search($request);
-
         return response()->json(["message"=>"Search results","Students" => $students]);
     }
 
+    public function getStudentPoints($studentId)
+    {
+        $points = $this->studentRepository->getPoints($studentId);
+        return response()->json([
+            "message" => "Student points retrieved successfully",
+            "points" => $points
+        ]);
+    }
 }

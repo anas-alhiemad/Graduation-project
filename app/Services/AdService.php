@@ -124,4 +124,22 @@ class AdService
     {
         return $photo->store('ads', 'public');
     }
+
+    public function getActiveAds(): JsonResponse
+    {
+        try {
+            $ads = $this->adRepository->getActiveAds();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Active ads retrieved successfully',
+                'data' => $ads
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to retrieve active ads',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 } 
