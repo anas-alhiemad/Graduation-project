@@ -6,6 +6,7 @@ use App\Services\ExamGradeService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
+   use App\Models\Trainer;
 class ExamGradeController extends Controller
 {
     protected $examGradeService;
@@ -63,29 +64,39 @@ class ExamGradeController extends Controller
     {
         try {
             $this->examGradeService->deleteExamGrade($id);
-            return response()->json(null, 204);
+          //  return response()->json(null, 204);
+           return response()->json(['message' => 'Deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 
-    public function getStudentGrades($studentId): JsonResponse
-    {
-        try {
-            //   For students, ensure they can only access their own grades
-            if (auth()->user()->hasRole('student') && auth()->user()->id != $studentId) {
-                return response()->json(['message' => 'Unauthorized access to student grades'], 403);
-            }
 
-            $grades = $this->examGradeService->getStudentGrades(1);
-            return response()->json(['data' => $grades]);
-        } catch (\InvalidArgumentException $e) {
-            return response()->json(['message' => $e->getMessage()], 403);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+//for trainer
+public function getStudentGrades($studentId): JsonResponse
+{
+    try {
+        $user = auth()->user();
+
+        // إذا كان المستخدم ليس مدرس لا تسمح له ا
+        if (!($user instanceof Trainer)) {
+            return response()->json(['message' => 'Unauthorized: only trainers can access student grades'], 403);
         }
-    }
 
+        
+        $grades = $this->examGradeService->getStudentGrades($studentId);
+
+        return response()->json(['data' => $grades]);
+
+    } catch (\InvalidArgumentException $e) {
+        return response()->json(['message' => $e->getMessage()], 403);
+    } catch (\Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 500);
+    }
+}
+
+
+//for student 
     public function getMyGrades(): JsonResponse
     {
         try {
