@@ -282,6 +282,7 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::get('/my-courses', [CourseSectionController::class, 'getTrainerCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
+Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
 
 });
 
