@@ -70,7 +70,8 @@ class ComplaintService
         }
 
         $data = [
-            'description' => $request->description
+            'description' => $request->description,
+            'student_id' => auth()->user()->id
         ];
 
         if ($request->hasFile('file')) {

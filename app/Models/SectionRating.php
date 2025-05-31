@@ -5,19 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Complaint extends Model
+class SectionRating extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'description',
-        'file_path',
-        'student_id'
+        'student_id',
+        'course_section_id',
+        'rating',
+        'comment'
     ];
 
-    // Relationship with Student
     public function student()
     {
         return $this->belongsTo(Student::class);
     }
-}
+
+    public function courseSection()
+    {
+        return $this->belongsTo(CourseSection::class);
+    }
+} 

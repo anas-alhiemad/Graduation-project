@@ -29,6 +29,9 @@ use App\Http\Controllers\DisplayStudentService;
 use App\Http\Controllers\DisplaySecretaryService;
 use App\Http\Controllers\StudentPointsController;
 use App\Http\Controllers\SecretaryPointsController;
+use App\Http\Controllers\TrainerRatingController;
+use App\Http\Controllers\SectionRatingController;
+use App\Http\Controllers\AttendanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -337,6 +340,35 @@ Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'exam-grades'
 // Exam Grades Management - Student Routes
 Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'grades'], function () {
     Route::get('/my-grades', [ExamGradeController::class, 'getMyGrades']);
+});
+
+// Trainer Rating - Student (Create rating)
+Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'trainer-rating'], function () {
+    Route::post('/rate', [TrainerRatingController::class, 'rateTrainer']);
+});
+
+// Trainer Rating - All Roles (View ratings)
+Route::group(['middleware' => ['api', 'auth:admin,trainer,secretary,student'], 'prefix' => 'trainer-rating'], function () {
+    Route::get('/{trainerId}/section/{sectionId}/ratings', [TrainerRatingController::class, 'getTrainerRatings']);
+});
+
+
+// Section Rating - Student (Create rating)
+Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'section-rating'], function () {
+    Route::post('/rate', [SectionRatingController::class, 'rateSection']);
+});
+
+
+// Section Rating - All Roles (View ratings)
+Route::group(['middleware' => ['api', 'auth:admin,trainer,secretary,student'], 'prefix' => 'section-rating'], function () {
+    Route::get('/{sectionId}/ratings', [SectionRatingController::class, 'getSectionRatings']);
+});
+
+// Attendance Routes
+Route::middleware('auth:trainer')->group(function () {
+    Route::post('/attendance/mark', [AttendanceController::class, 'markAttendance']);
+    Route::get('/section/{sectionId}/attendance', [AttendanceController::class, 'getSectionAttendance']);
+    Route::get('/student/{studentId}/section/{sectionId}/attendance', [AttendanceController::class, 'getStudentAttendance']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
