@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ForumQuestion extends Model
 {
@@ -27,9 +28,13 @@ class ForumQuestion extends Model
         return $this->belongsTo(CourseSection::class, 'section_id');
     }
 
-    public function user(): BelongsTo
+    public function user(): MorphTo
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo(null, 'user_type', 'user_id')
+            ->withDefault([
+                'name' => 'Unknown User',
+                'email' => 'unknown@example.com'
+            ]);
     }
 
     public function answers(): HasMany
@@ -43,4 +48,18 @@ class ForumQuestion extends Model
             ->withPivot('user_type')
             ->withTimestamps();
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($question) {
+            if ($question->user_type === 'trainer') {
+                $question->user_type = Trainer::class;
+            } elseif ($question->user_type === 'student') {
+                $question->user_type = Student::class;
+            }
+        });
+    }
+   
 } 
