@@ -5,6 +5,8 @@ namespace App\Services\ForumService;
 use App\Models\ForumQuestion;
 use App\Models\ForumAnswer;
 use App\Models\CourseSection;
+use App\Models\Student;
+use App\Models\Trainer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,6 +14,12 @@ use Illuminate\Support\Facades\DB;
 
 class ForumService
 {
+    
+    private function getUserType($user): string
+    {
+        return $user instanceof Trainer ? 'trainer' : 'student';
+    }
+
     private function checkSectionAccess(CourseSection $section): void
     {
         if (!$section) {
@@ -24,12 +32,12 @@ class ForumService
         }
 
         // Get user type and ID
-        $userType = $user instanceof \App\Models\Trainer ? 'trainer' : 'student';
+        $userType = $this->getUserType($user);
         $userId = $user->id;
 
         // Check if user is a member of the section
         $isMember = false;
-        if ($userType === 'trainer') {
+        if ($user instanceof Trainer) {
             $isMember = $section->trainers()->where('trainers.id', $userId)->exists();
         } else {
             $isMember = $section->students()->where('students.id', $userId)->exists();
@@ -44,7 +52,7 @@ class ForumService
     {
         $this->checkSectionAccess($section);
         return $section->questions()
-            ->with(['answers', 'likes', 'section'])
+            ->with(['answers.user', 'likes', 'section', 'user'])
             ->latest()
             ->get();
     }
@@ -53,7 +61,7 @@ class ForumService
     {
         $this->checkSectionAccess($section);
         return $section->questions()
-            ->with(['section'])
+            ->with(['section', 'user'])
             ->withCount(['likes', 'answers'])
             ->latest()
             ->get();
@@ -66,30 +74,29 @@ class ForumService
         }
 
         $this->checkSectionAccess($question->section);
-       return $question->likes()
-    ->select('forum_question_likes.user_id', 'forum_question_likes.user_type', 'forum_question_likes.created_at')
-    ->get();
-
+        return $question->likes()
+            ->with('user')
+          //  ->select('forum_question_likes.user_id', 'forum_question_likes.user_type', 'forum_question_likes.created_at')
+            ->get();
     }
 
-public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\Eloquent\Collection
-{
-    if (!$question) {
-        throw new \Exception('Question not found');
+    public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\Eloquent\Collection
+    {
+        if (!$question) {
+            throw new \Exception('Question not found');
+        }
+
+        $this->checkSectionAccess($question->section);
+
+        $likes = $question->answers()
+            ->with(['likes.user'])
+            ->get()
+            ->flatMap(function ($answer) {
+                return $answer->likes;
+            });
+
+        return new \Illuminate\Database\Eloquent\Collection($likes);
     }
-
-    $this->checkSectionAccess($question->section);
-
- 
-    $likes = $question->answers()
-        ->with('likes')
-        ->get()
-        ->flatMap(function ($answer) {
-            return $answer->likes;
-        });
-
-    return new \Illuminate\Database\Eloquent\Collection($likes);
-}
 
     public function createQuestion(array $data): ForumQuestion
     {
@@ -97,7 +104,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         $this->checkSectionAccess($section);
         
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Trainer ? 'trainer' : 'student';
+        $userType = $this->getUserType($user);
         
         $question = ForumQuestion::create([
             'section_id' => $data['section_id'],
@@ -107,7 +114,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
             'content' => $data['content']
         ]);
 
-        return $question->load('section');
+        return $question->load(['section', 'user']);
     }
 
     public function createAnswer(array $data): ForumAnswer
@@ -116,7 +123,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         $this->checkSectionAccess($question->section);
         
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Trainer ? 'trainer' : 'student';
+        $userType = $this->getUserType($user);
         
         $answer = ForumAnswer::create([
             'question_id' => $data['question_id'],
@@ -125,7 +132,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
             'content' => $data['content']
         ]);
 
-        return $answer->load('question.section');
+        return $answer->load(['question.section', 'user']);
     }
 
     public function deleteQuestion(ForumQuestion $question): array
@@ -153,7 +160,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         $this->checkSectionAccess($question->section);
         
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Trainer ? 'trainer' : 'student';
+        $userType = $this->getUserType($user);
         
         if ($question->likes()
             ->where('forum_question_likes.user_id', $user->id)
@@ -166,7 +173,6 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         return true;
     }
 
-    
     public function markAnswerAsAccepted(ForumAnswer $answer): void
     {
         if (!$answer || !$answer->question) {
@@ -176,7 +182,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         $this->checkSectionAccess($answer->question->section);
         
         $user = Auth::user();
-        if (!($user instanceof \App\Models\Trainer)) {
+        if (!($user instanceof Trainer)) {
             throw new \Exception('Only trainers can mark answers as accepted');
         }
 
@@ -199,11 +205,10 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         $answer->question->update(['is_resolved' => true]);
     }
 
-
     public function getQuestionsBySection(CourseSection $section)
     {
         return $section->questions()
-            ->with(['answers', 'likes'])
+            ->with(['answers.user', 'likes', 'user'])
             ->latest()
             ->get();
     }
@@ -217,7 +222,7 @@ public function getAnswerLikes(ForumQuestion $question): \Illuminate\Database\El
         $this->checkSectionAccess($answer->question->section);
         
         $user = Auth::user();
-        $userType = $user instanceof \App\Models\Trainer ? 'trainer' : 'student';
+        $userType = $this->getUserType($user);
         
         if ($answer->likes()
             ->where('forum_answer_likes.user_id', $user->id)

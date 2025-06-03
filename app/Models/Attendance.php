@@ -14,7 +14,8 @@ class Attendance extends Model
         'trainer_id',
         'course_section_id',
         'is_present',
-        'date'
+        'date',
+         'session_title',
     ];
 
     protected $casts = [

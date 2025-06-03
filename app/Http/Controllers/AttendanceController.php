@@ -17,36 +17,39 @@ class AttendanceController extends Controller
     }
 
     public function markAttendance(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'section_id' => 'required|exists:course_sections,id',
-            'student_id' => 'required|exists:students,id',
-            'is_present' => 'required|boolean',
-            'date' => 'nullable|date'
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'section_id' => 'required|exists:course_sections,id',
+        'student_id' => 'required|exists:students,id',
+        'is_present' => 'required|boolean',
+        'date' => 'nullable|date',
+        'session_title' => 'nullable|string|max:255', // <-- جديد
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        try {
-            $attendance = $this->attendanceService->markAttendance(
-                $request->section_id,
-                $request->student_id,
-                $request->is_present,
-                $request->date
-            );
-
-            return response()->json([
-                'message' => 'Attendance marked successfully',
-                'data' => $attendance
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
-        }
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
     }
+
+    try {
+        $attendance = $this->attendanceService->markAttendance(
+            $request->section_id,
+            $request->student_id,
+            $request->is_present,
+            $request->date,
+            $request->session_title // <-- جديد
+        );
+
+        return response()->json([
+            'message' => 'Attendance marked successfully',
+            'data' => $attendance
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => $e->getMessage()
+        ], 400);
+    }
+}
+
 
     public function getSectionAttendance($sectionId, Request $request)
     {

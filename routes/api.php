@@ -32,6 +32,7 @@ use App\Http\Controllers\SecretaryPointsController;
 use App\Http\Controllers\TrainerRatingController;
 use App\Http\Controllers\SectionRatingController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SectionStudentSearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -369,6 +370,15 @@ Route::middleware('auth:trainer')->group(function () {
     Route::post('/attendance/mark', [AttendanceController::class, 'markAttendance']);
     Route::get('/section/{sectionId}/attendance', [AttendanceController::class, 'getSectionAttendance']);
     Route::get('/student/{studentId}/section/{sectionId}/attendance', [AttendanceController::class, 'getStudentAttendance']);
+});
+
+################################# STUDENT SEARCH ROUTES ##########################
+
+// Student Search Routes (for trainers only)
+Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'trainer'], function () {
+    Route::get('students/search', [SectionStudentSearchController::class, 'searchInAllSections']);
+    Route::get('sections/{section}/students/search', [SectionStudentSearchController::class, 'searchInSpecificSection']);
+    Route::get('sections/{section}/students/{studentId}', [SectionStudentSearchController::class, 'getStudentDetails']);
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

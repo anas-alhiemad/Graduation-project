@@ -11,47 +11,46 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceService
 {
-    public function markAttendance($sectionId, $studentId, $isPresent, $date = null)
-    {
-        $trainer = Auth::user();
-        
-        // Validate that the trainer is in the section
-        $isTrainerInSection = CourseSection::find($sectionId)
-            ->trainers()
-            ->where('trainers.id', $trainer->id)
-            ->exists();
+    public function markAttendance($sectionId, $studentId, $isPresent, $date = null, $sessionTitle = null)
+{
+    $trainer = Auth::user();
 
-        if (!$isTrainerInSection) {
-            throw new \Exception('You are not assigned to this section.');
-        }
+    $isTrainerInSection = CourseSection::find($sectionId)
+        ->trainers()
+        ->where('trainers.id', $trainer->id)
+        ->exists();
 
-        // Validate that the student is in the section
-        $isStudentInSection = CourseSection::find($sectionId)
-            ->students()
-            ->where('students.id', $studentId)
-            ->exists();
-
-        if (!$isStudentInSection) {
-            throw new \Exception('This student is not enrolled in this section.');
-        }
-
-        // Use current date if not provided
-        $date = $date ?? now()->toDateString();
-
-        return DB::transaction(function () use ($trainer, $sectionId, $studentId, $isPresent, $date) {
-            return Attendance::updateOrCreate(
-                [
-                    'student_id' => $studentId,
-                    'course_section_id' => $sectionId,
-                    'date' => $date,
-                ],
-                [
-                    'trainer_id' => $trainer->id,
-                    'is_present' => $isPresent,
-                ]
-            );
-        });
+    if (!$isTrainerInSection) {
+        throw new \Exception('You are not assigned to this section.');
     }
+
+    $isStudentInSection = CourseSection::find($sectionId)
+        ->students()
+        ->where('students.id', $studentId)
+        ->exists();
+
+    if (!$isStudentInSection) {
+        throw new \Exception('This student is not enrolled in this section.');
+    }
+
+    $date = $date ?? now()->toDateString();
+
+    return DB::transaction(function () use ($trainer, $sectionId, $studentId, $isPresent, $date, $sessionTitle) {
+        return Attendance::updateOrCreate(
+            [
+                'student_id' => $studentId,
+                'course_section_id' => $sectionId,
+                'date' => $date,
+            ],
+            [
+                'trainer_id' => $trainer->id,
+                'is_present' => $isPresent,
+                'session_title' => $sessionTitle,
+            ]
+        );
+    });
+}
+
 
     public function getSectionAttendance($sectionId, $date = null)
     {
