@@ -173,6 +173,7 @@ Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => '
     Route::get('/my-courses', [CourseSectionController::class, 'getStudentCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
     Route::get('/points', [StudentPointsController::class, 'getPoints']);
+    Route::get('/courses/{courseId}/sections', [CourseSectionController::class, 'getSectionsByCourseId']);
 });
 
 // Student Complaint Management
