@@ -173,7 +173,8 @@ Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => '
     Route::get('/my-courses', [CourseSectionController::class, 'getStudentCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
     Route::get('/points', [StudentPointsController::class, 'getPoints']);
-    Route::get('/courses/{courseId}/sections', [CourseSectionController::class, 'getSectionsByCourseId']);
+     Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
+  
         Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
 });
 
