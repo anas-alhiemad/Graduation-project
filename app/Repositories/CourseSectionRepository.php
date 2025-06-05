@@ -17,6 +17,12 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
         return $this->model->with('weekDays')->where('courseId',$courseId)->paginate(10);
     }
 
+    public function getAllByCourseIdIspending($courseId)
+    {
+        return $this->model->with('weekDays','trainers')->where('courseId',$courseId)
+                                             ->where('state',"pending")->paginate(10);
+    }
+
     public function incrementSeat($course_section_id)
     {
         return $this->model->where('id',$course_section_id)->increment('reservedSeats');
@@ -66,5 +72,14 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
         return $this->model::whereHas('trainers', function($query) use ($trainerId) {
             $query->where('trainer_id', $trainerId);
         })->with(['course', 'weekDays'])->get();
+    }
+
+
+
+    public function getAllTrainerCourses()
+    {
+        return  $this->model::whereHas('trainers')
+                    ->with(['course', 'trainers'])
+                    ->paginate(10);
     }
 }

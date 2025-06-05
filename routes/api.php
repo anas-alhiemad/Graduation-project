@@ -256,6 +256,9 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
     Route::post('/deleteTrainer/{trainerId}', [CRUDTrainerController::class, 'DeleteTrainer']);
 });
 
+
+
+
 // Secretary Course Section Management
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/section'], function () {
     Route::post('/createCourseSection', [CourseSectionController::class, 'CreateCourseSection']);
@@ -270,6 +273,16 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
     Route::post('/registerTrainerToSection', [CourseSectionController::class, 'RegisterTrainerToSection']);
     Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
     Route::post('/deleteTrainerFromSection', [CourseSectionController::class, 'DeleteTrainerFromSection']);
+});
+
+
+Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'section'], function () {
+    Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
+    Route::get('/showAllCourseSectionIsPending/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionPending']);
+});
+
+Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'trainer'], function () {
+    Route::get('/indexTrainerWithCourse', [CourseSectionController::class, 'IndexTrainerWithCourse']);
 });
 
 // Secretary Reservation Management
