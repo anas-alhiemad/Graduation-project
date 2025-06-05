@@ -102,14 +102,15 @@ class ForumController extends Controller
     }
 
     public function deleteQuestion(ForumQuestion $question): JsonResponse
-    {
-        try {
-            $this->forumService->deleteQuestion($question);
-            return response()->json(null, 204);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 403);
-        }
+{
+    try {
+        $this->forumService->deleteQuestion($question);
+        return response()->json(['message' => 'Deleted successfully'], 200);
+    } catch (\Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 403);
     }
+}
+
 
     public function toggleLike(ForumQuestion $question): JsonResponse
     {
