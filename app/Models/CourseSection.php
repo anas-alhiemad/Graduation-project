@@ -48,6 +48,7 @@ class CourseSection extends Model
                     ->withPivot('is_confirmed')
                     ->withTimestamps();
     }
+    
     public function trainers()
     {
         return $this->belongsToMany(Trainer::class, 'section_trainers')

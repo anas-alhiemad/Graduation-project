@@ -38,6 +38,10 @@ class CourseSectionController extends Controller
     {
         return $this->displayCourseSectionService->indexSection($courseId);
     }
+    public function ShowAllCourseSectionPending($courseId) 
+    {
+        return $this->displayCourseSectionService->indexSectionPending($courseId);
+    }
     public function ShowByIdCourseSection($sectionId) 
     {
         return $this->displayCourseSectionService->getSectionById($sectionId);
@@ -108,5 +112,11 @@ class CourseSectionController extends Controller
     {
         $trainerId = auth()->user()->id;
         return $this->sectionTrainerService->getTrainerCourses($trainerId);
+    }
+
+
+    public function IndexTrainerWithCourse() 
+    {
+        return $this->sectionTrainerService->indexTrainerWithCourse();
     }
 }

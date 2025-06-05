@@ -13,6 +13,42 @@ class DisplayCourseSectionService
     }
 
 
+
+    public function indexSection($courseID)
+    {
+      return  $sections = $this->courseSectionRepository->getAllByCourseId($courseID);
+
+        $formatted = $sections->map(function ($section) {
+            return $section->only([
+                'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state','courseId', 'created_at', 'updated_at'
+            ]) + [
+                'week_days' => $section->formatted_week_days,
+            ];
+        });
+
+        return response()->json([
+            "message" => "All sections in the course.",
+            "sections" => $formatted,
+        ]);
+    }
+    public function indexSectionPending($courseID)
+    {
+      return  $sections = $this->courseSectionRepository->getAllByCourseIdIspending($courseID);
+
+        $formatted = $sections->map(function ($section) {
+            return $section->only([
+                'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state','courseId', 'created_at', 'updated_at'
+            ]) + [
+                'week_days' => $section->formatted_week_days,
+            ];
+        });
+
+        return response()->json([
+            "message" => "All sections in the course.",
+            "sections" => $formatted,
+        ]);
+    }
+
    public function indexSection($courseID)
 {
     // جلب السكاشن وتحميل علاقة المدربين والـ weekDays
@@ -37,6 +73,7 @@ class DisplayCourseSectionService
         "sections" => $formatted,
     ]);
 }
+
 
     public function getSectionById($section_id)
     {

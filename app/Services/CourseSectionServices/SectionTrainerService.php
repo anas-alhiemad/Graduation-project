@@ -62,4 +62,30 @@ class SectionTrainerService
             'courses' => $courses
         ]);
     }
+
+
+public function indexTrainerWithCourse() 
+{
+    $trainersWithCourse = $this->courseSectionRepository->getAllTrainerCourses();
+
+    $trainersWithCourse->setCollection(
+        $trainersWithCourse->getCollection()
+            ->map(function ($section) {
+                return [
+                    'trainer_id' => $section->trainers[0]->id ?? null,
+                    'trainer' => $section->trainers[0] ?? null,
+                    'course_id' => $section->course->id,
+                    'course' => $section->course,
+                ];
+            })
+            ->unique(fn($item) => $item['course_id'] . '-' . $item['trainer_id'])
+            ->values()
+    );
+
+    return response()->json([
+        "message" => "All Trainers in the System with Course.",
+        "Trainers" => $trainersWithCourse
+    ]);
+}
+
 }
