@@ -13,23 +13,30 @@ class DisplayCourseSectionService
     }
 
 
-    public function indexSection($courseID)
-    {
-      return  $sections = $this->courseSectionRepository->getAllByCourseId($courseID);
+   public function indexSection($courseID)
+{
+    // جلب السكاشن وتحميل علاقة المدربين والـ weekDays
+    $sections = $this->courseSectionRepository
+        ->getAllByCourseId($courseID);
 
-        $formatted = $sections->map(function ($section) {
-            return $section->only([
-                'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state','courseId', 'created_at', 'updated_at'
-            ]) + [
-                'week_days' => $section->formatted_week_days,
-            ];
-        });
+    $sections->load(['trainers', 'weekDays']); 
 
-        return response()->json([
-            "message" => "All sections in the course.",
-            "sections" => $formatted,
-        ]);
-    }
+    $formatted = $sections->map(function ($section) {
+        return $section->only([
+            'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats', 'endDate', 'state', 'courseId', 'created_at', 'updated_at'
+        ]) + [
+            'week_days' => $section->formatted_week_days,
+            'trainers' => $section->trainers->map(function ($trainer) {
+                return $trainer->only(['id', 'name', 'email', 'specialization', 'experience', 'photo']);
+            }),
+        ];
+    });
+
+    return response()->json([
+        "message" => "All sections in the course.",
+        "sections" => $formatted,
+    ]);
+}
 
     public function getSectionById($section_id)
     {
