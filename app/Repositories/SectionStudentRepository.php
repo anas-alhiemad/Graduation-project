@@ -4,6 +4,7 @@ namespace App\Repositories;
 use App\Models\SectionStudent;
 use App\Repositories\BaseRepository;
 use App\Interfaces\RepositoryInterface;
+use App\Models\Student;
 
 class SectionStudentRepository extends BaseRepository implements RepositoryInterface
 {
@@ -31,22 +32,21 @@ class SectionStudentRepository extends BaseRepository implements RepositoryInter
     }
 
 
-        public function showReservation($section_student_id) 
-        {
-            return $this->model
-                ->join('students', 'students.id', '=', 'section_students.student_id')
-                ->where('section_students.id', $section_student_id)        
-                ->select(
-                'section_students.*',
-                'students.name',
-                'students.email',
-                'students.phone',
-                'students.photo',
-                'students.birthday',
-                'students.gender',
-                'students.birthday'
-                )->first();
-        }
-
+    public function showReservation($section_student_id) 
+    {
+        return $this->model
+            ->join('students', 'students.id', '=', 'section_students.student_id')
+            ->where('section_students.id', $section_student_id)        
+            ->select(
+            'section_students.*',
+            'students.name',
+            'students.email',
+            'students.phone',
+            'students.photo',
+            'students.birthday',
+            'students.gender',
+            'students.birthday'
+            )->first();
+    }
 
 }

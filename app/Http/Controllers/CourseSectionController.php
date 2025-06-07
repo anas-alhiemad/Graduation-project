@@ -84,8 +84,12 @@ class CourseSectionController extends Controller
     {
         return $this->sectionStudentService->deleteStudentFromSection($request);
     }
-
     
+    public function GetMyScheduleByDay($name_day) 
+    {
+        return $this->sectionStudentService->getStudentSchedule($name_day);
+    }
+
 
     public function RegisterTrainerToSection(SectionTrainertRequest $request) 
     {

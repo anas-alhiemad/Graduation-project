@@ -16,7 +16,7 @@ class CheckIfUserAuthenticatedAsStudentOrSecretary
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::guard('student')->check() || Auth::guard('secretary')->check()) {
+        if (Auth::guard('student')->check() || Auth::guard('secretary')->check() || Auth::guard('trainer')->check()) {
             return $next($request);
         }
 

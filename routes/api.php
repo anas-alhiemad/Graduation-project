@@ -196,6 +196,11 @@ Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student/reserv
     Route::post('/cancelReservation/{reservation_id}', [ReservationController::class, 'CancelReservation']);
 });
 
+
+Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student/events'], function () {
+    Route::get('/getMyScheduleByDay/{name_day}', [CourseSectionController::class, 'GetMyScheduleByDay']);
+});
+
 ################################# SECRETARY ROUTES ##########################
 
 // Secretary Department & Course Management
@@ -315,7 +320,7 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/file']
    Route::post('/deleteFile/{file_Id}', [FileController::class, 'DeleteFile']);
 });
 
-Route::group(['middleware' =>'api','prefix' => 'file'], function () {
+Route::group(['middleware' => ['api','Auth_student_or_secretary'],'prefix' => 'file'], function () {
    Route::get('/showAllFileInSection/{course_section_id}', [FileController::class, 'ShowAllFileInSection']);
    Route::get('/showFileById/{file_Id}', [FileController::class, 'ShowFileById']);
 

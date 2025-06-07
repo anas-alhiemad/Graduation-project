@@ -51,5 +51,11 @@ class StudentRepository extends BaseRepository implements RepositoryInterface
     {
         return $this->model->where('id', $studentId)->value('points');
     }
+
+    public function getSchedule(Student $student) 
+    {
+        return $student->sections()->where('state','in_progress')->with(['course', 'weekDays'])->get();
+    }
+
   
 }
