@@ -1,29 +1,36 @@
 <?php
 namespace App\Services\CourseSectionServices;
 
+use App\Models\Student;
+use App\Models\Trainer;
+use App\Models\CourseSection;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\StudentRepository;
+use App\Repositories\WeekDayRepository;
+use Illuminate\Database\Eloquent\Collection;
 use App\Repositories\CourseSectionRepository;
 use App\Repositories\SectionStudentRepository;
 use App\Repositories\SectionTrainerRepository;
-use App\Models\Trainer;
-use App\Models\Student;
-use App\Models\CourseSection;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Collection;
 
 class SectionStudentService 
 {
     protected $sectionStudentRepository;
     protected $courseSectionRepository;
     protected $sectionTrainerRepository;
-    
+    protected $weekDayRepository;
+    protected $studentRepository;
     public function __construct(
         SectionStudentRepository $sectionStudentRepository,
         CourseSectionRepository $courseSectionRepository,
-        SectionTrainerRepository $sectionTrainerRepository
+        SectionTrainerRepository $sectionTrainerRepository,
+        WeekDayRepository $weekDayRepository,
+        StudentRepository $studentRepository
     ) {
         $this->sectionStudentRepository = $sectionStudentRepository;
         $this->courseSectionRepository = $courseSectionRepository;
         $this->sectionTrainerRepository = $sectionTrainerRepository;
+        $this->weekDayRepository = $weekDayRepository;
+        $this->studentRepository = $studentRepository;
     }
 
     public function registerStudentToSection($request)
@@ -178,4 +185,44 @@ class SectionStudentService
             'section' => $section->only(['id', 'name', 'seatsOfNumber', 'reservedSeats'])
         ];
     }
+
+        
+    public function getStudentSchedule($name_day)
+    {
+        $dayNameToId = $this->weekDayRepository->dayNameToId();
+
+        if (!isset($dayNameToId[$name_day])) {
+            return response()->json(['message' => 'Invalid day name'], 400);
+        }
+
+        $dayId = $dayNameToId[$name_day];
+        $student = auth()->user();
+
+        $schedule = $this->studentRepository->getSchedule($student);
+
+        $events = [];
+
+        foreach ($schedule as $section) {
+            foreach ($section->weekDays as $day) {
+                if ($day->id != $dayId) {
+                    continue;
+                }
+
+                $events[] = [
+                    'course'     => $section->course,
+                    'section' => collect($section)->only(['id', 'name', 'seatsOfNumber', 'reservedSeats', 'state',
+                                                        'startDate', 'endDate', 'courseId', 'created_at', 'updated_at']),
+                    'day'        => $day,
+                    'start_time' => $day->pivot->start_time,
+                    'end_time'   => $day->pivot->end_time,
+                ];
+            }
+        }
+
+        return response()->json([
+            'message' => "Schedule your tasks today",
+            'Events' => $events ],200);       
+    }
+
+
 }
