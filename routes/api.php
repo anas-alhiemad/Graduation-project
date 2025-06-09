@@ -6,32 +6,33 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GiftController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuthStudentController;
 use App\Http\Controllers\AuthTrainerController;
 use App\Http\Controllers\CRUDStudentController;
 use App\Http\Controllers\CRUDTrainerController;
+use App\Http\Controllers\DisplayStudentService;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\CRUDEmployeeController;
 use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\CourseSectionController;
+use App\Http\Controllers\DisplaySecretaryService;
 use App\Http\Controllers\FunctionAdminController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\SectionRatingController;
+use App\Http\Controllers\StudentPointsController;
+use App\Http\Controllers\TrainerRatingController;
+use App\Http\Controllers\SecretaryPointsController;
 use App\Http\Controllers\PointsManagementController;
 use App\Http\Controllers\FunctionSecretaryController;
-use App\Http\Controllers\DisplayStudentService;
-use App\Http\Controllers\DisplaySecretaryService;
-use App\Http\Controllers\StudentPointsController;
-use App\Http\Controllers\SecretaryPointsController;
-use App\Http\Controllers\TrainerRatingController;
-use App\Http\Controllers\SectionRatingController;
-use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\SectionStudentSearchController;
 
 /*
@@ -326,6 +327,10 @@ Route::group(['middleware' => ['api','Auth_student_or_secretary'],'prefix' => 'f
 
 });
 
+################################# FILE ROUTES ##########################
+Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/quiz'], function () {
+   Route::post('/createQuiz', [QuizController::class, 'CreateQuiz']);
+});
 ################################# FORUM ROUTES ##########################
 
 // Forum Routes (for students and trainers)

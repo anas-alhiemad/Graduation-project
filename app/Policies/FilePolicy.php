@@ -21,9 +21,16 @@ class FilePolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(Admin $admin, Section_File $sectionFile)
+    public function view($user, CourseSection $courseSection)
     {
-        //
+        $section = $courseSection;
+        if ($user instanceof \App\Models\Trainer || $user instanceof \App\Models\Student) {
+        return $user->sections()->where('course_sections.id', $section->id)->exists()
+            ? Response::allow()
+            : Response::deny('You are not allowed to view this file.');
+    }
+
+    return Response::deny('Unauthorized user type.');
     }
 
     /**
@@ -37,7 +44,7 @@ class FilePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function upload(Trainer $trainer, CourseSection $section)
+    public function upload(Trainer $trainer,CourseSection $section)
     {
         return $trainer->sections()->where('course_sections.id', $section->id)->exists();
     }

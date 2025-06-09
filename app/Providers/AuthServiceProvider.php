@@ -4,6 +4,7 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use App\Policies\FilePolicy;
+use App\Policies\QuizPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -16,6 +17,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
          \App\Models\Section_File::class => \App\Policies\FilePolicy::class,
+          \App\Models\Quiz::class => \App\Policies\QuizPolicy::class,
     ];
 
     /**
@@ -24,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('upload', [FilePolicy::class, 'upload']);
+        Gate::define('view', [FilePolicy::class, 'view']);
+        Gate::define('create', [QuizPolicy::class, 'create']);
 
     }
 }
