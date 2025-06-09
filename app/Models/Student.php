@@ -60,7 +60,7 @@ class Student extends Authenticatable implements JWTSubject
     public function sections()
     {
         return $this->belongsToMany(CourseSection::class, 'section_students')
-                    ->withPivot('is_confirmed')
+                    ->withPivot('id','is_confirmed')
                     ->withTimestamps();
     }
 }

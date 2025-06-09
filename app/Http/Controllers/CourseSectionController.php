@@ -123,4 +123,9 @@ class CourseSectionController extends Controller
     {
         return $this->sectionTrainerService->indexTrainerWithCourse();
     }
+
+    public function GetCourseIsFinshed() 
+    {
+        return $this->sectionStudentService->getStudentCoursesFinshed();
+    }
 }

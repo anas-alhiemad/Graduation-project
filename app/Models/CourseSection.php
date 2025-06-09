@@ -45,7 +45,7 @@ class CourseSection extends Model
     public function students()
     {
         return $this->belongsToMany(Student::class, 'section_students')
-                    ->withPivot('is_confirmed')
+                    ->withPivot('id','is_confirmed')
                     ->withTimestamps();
     }
     
@@ -64,6 +64,12 @@ class CourseSection extends Model
     {
         return $this->hasMany(ForumQuestion::class, 'section_id');
 
+    }
+
+
+    public function quiz()
+    {
+        return $this->hasMany(Quiz::class,'course_section_id');
     }
 
 }

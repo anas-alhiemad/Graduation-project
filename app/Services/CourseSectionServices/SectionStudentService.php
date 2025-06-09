@@ -94,6 +94,16 @@ class SectionStudentService
         ]);
     }
 
+    public function getStudentCoursesFinshed()
+    {
+        $studentId = Auth::guard('student')->id();
+        $courses = $this->courseSectionRepository->getStudentCoursesIsFinished($studentId);
+        return response()->json([
+            'message' => "Courses that student is enrolled in",
+            'courses' => $courses
+        ]);
+    }
+
     public function searchStudentsInTrainerSections(string $searchTerm): Collection
     {
         $trainer = Auth::user();
@@ -220,8 +230,7 @@ class SectionStudentService
         }
 
         return response()->json([
-            'message' => "Schedule your tasks today",
-            'Events' => $events ],200);       
+            'message' => "Schedule your tasks today",'Events' => $events ],200);       
     }
 
 
