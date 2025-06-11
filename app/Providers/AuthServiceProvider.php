@@ -28,6 +28,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('upload', [FilePolicy::class, 'upload']);
         Gate::define('view', [FilePolicy::class, 'view']);
         Gate::define('create', [QuizPolicy::class, 'create']);
+        Gate::define('view', [QuizPolicy::class, 'view']);
+        Gate::define('delete', [QuizPolicy::class, 'delete']);
+        Gate::define('update', [QuizPolicy::class, 'update']);
 
     }
 }

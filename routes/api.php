@@ -327,10 +327,22 @@ Route::group(['middleware' => ['api','Auth_student_or_secretary'],'prefix' => 'f
 
 });
 
-################################# FILE ROUTES ##########################
+################################# Quiz ROUTES ##########################
 Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/quiz'], function () {
    Route::post('/createQuiz', [QuizController::class, 'CreateQuiz']);
+   Route::post('/updateTitle/{quiz_id}', [QuizController::class, 'UpdateTitle']);
+   Route::post('/updateQuestion/{question_id}', [QuizController::class, 'UpdateQuestion']);
+   Route::post('/deleteQuiz/{quiz_id}', [QuizController::class, 'DeleteQuiz']);
+   Route::post('/deleteQuizQuestion/{question_id}', [QuizController::class, 'DeleteQuizQuestion']);
 });
+
+Route::group(['middleware' => ['api','Auth_student_or_secretary'],'prefix' => 'quiz'], function () {
+    Route::get('/listQuizzesBySectionId/{course_section_id}', [QuizController::class, 'ListQuizzesBySectionId']);
+    Route::get('/showQuizById/{quiz_id}', [QuizController::class, 'ShowQuizById']);
+    Route::post('/answerQuestion/{option_id}', [QuizController::class, 'answerQuestion']);
+
+});
+
 ################################# FORUM ROUTES ##########################
 
 // Forum Routes (for students and trainers)
