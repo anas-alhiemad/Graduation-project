@@ -21,9 +21,14 @@ class QuizPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(Admin $admin, Quiz $quiz) 
+    public function view($user, CourseSection $courseSection)
     {
-        //
+        $section = $courseSection;
+        if ($user instanceof \App\Models\Trainer || $user instanceof \App\Models\Student) {
+        return $user->sections()->where('course_sections.id', $section->id)->exists()
+            ? Response::allow()
+            : Response::deny('You are not allowed to view this file.');
+    }
     }
 
     /**
@@ -37,17 +42,17 @@ class QuizPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(Admin $admin, Quiz $quiz) 
+    public function update(Trainer $trainer, CourseSection $section) 
     {
-        //
+       return $trainer->sections()->where('course_sections.id', $section->id)->exists();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(Admin $admin, Quiz $quiz) 
+    public function delete(Trainer $trainer, CourseSection $section) 
     {
-        //
+        return $trainer->sections()->where('course_sections.id', $section->id)->exists();
     }
 
     /**

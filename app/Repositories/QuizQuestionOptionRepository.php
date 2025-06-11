@@ -11,4 +11,14 @@ class QuizQuestionOptionRepository extends BaseRepository implements RepositoryI
     {
         parent::__construct($model);
     }
+
+    public function getAllQuestionOptions($quiz_question_id) 
+    {
+        return $this->model::where('quiz_question_id',$quiz_question_id)->get();
+    }
+
+    public function getByIdQuestionOptions($quiz_question_id) 
+    {
+        return $this->model::where('quiz_question_id',$quiz_question_id)->first();
+    }
 }
