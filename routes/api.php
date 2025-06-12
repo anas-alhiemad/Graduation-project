@@ -34,6 +34,12 @@ use App\Http\Controllers\SecretaryPointsController;
 use App\Http\Controllers\PointsManagementController;
 use App\Http\Controllers\FunctionSecretaryController;
 use App\Http\Controllers\SectionStudentSearchController;
+use App\Http\Controllers\SectionQAController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TrainerController;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -345,18 +351,32 @@ Route::group(['middleware' => ['api','Auth_student_or_secretary'],'prefix' => 'q
 
 ################################# FORUM ROUTES ##########################
 
-// Forum Routes (for students and trainers)
-Route::group(['middleware' => ['api', 'auth:student,trainer'], 'prefix' => 'forum'], function () {
-    Route::get('sections/{section}/questions/stats', [ForumController::class, 'getQuestionsWithStats']);
-    Route::get('questions/{question}/likes', [ForumController::class, 'getQuestionLikes']);
-    Route::get('questions/{question}/answer-likes', [ForumController::class, 'getAnswerLikes']);
-    Route::get('sections/{section}/questions', [ForumController::class, 'getSectionQuestions']);
-    Route::post('sections/{section}/questions', [ForumController::class, 'createQuestion']);
-    Route::post('questions/{question}/answers', [ForumController::class, 'createAnswer']);
-    Route::delete('questions/{question}', [ForumController::class, 'deleteQuestion']);
-    Route::post('questions/{question}/like', [ForumController::class, 'toggleLike']);
-    Route::post('answers/{answer}/like', [ForumController::class, 'toggleAnswerLike']);
-    Route::post('answers/{answer}/accept', [ForumController::class, 'markAnswerAsAccepted']);
+
+
+
+// Forum QA Routes
+Route::group(['middleware' => ['api', 'auth:trainer,student'], 'prefix' => 'forum'], function () {
+    // Question routes
+    Route::get('sections/{sectionId}/questions', [SectionQAController::class, 'getSectionQuestions']);
+    Route::post('questions', [SectionQAController::class, 'createQuestion']);
+    Route::put('questions/{questionId}', [SectionQAController::class, 'updateQuestion']);
+    Route::delete('questions/{questionId}', [SectionQAController::class, 'deleteQuestion']);
+    Route::post('questions/{questionId}/like', [SectionQAController::class, 'likeQuestion']);
+    Route::delete('questions/{questionId}/like', [SectionQAController::class, 'unlikeQuestion']);
+
+    // Answer routes accessible by trainer and student
+    Route::get('questions/{questionId}/answers', [SectionQAController::class, 'getQuestionAnswers']);
+    Route::post('answers', [SectionQAController::class, 'createAnswer']);
+    Route::put('answers/{answerId}', [SectionQAController::class, 'updateAnswer']);
+    Route::delete('answers/{answerId}', [SectionQAController::class, 'deleteAnswer']);
+    Route::post('answers/{answerId}/like', [SectionQAController::class, 'likeAnswer']);
+    Route::delete('answers/{answerId}/like', [SectionQAController::class, 'unlikeAnswer']);
+
+    // Group for trainer-only routes
+    Route::group(['middleware' => ['auth:trainer']], function () {
+        Route::post('answers/{answerId}/accept', [SectionQAController::class, 'acceptAnswer']);
+        Route::delete('answers/{answerId}/accept', [SectionQAController::class, 'unacceptAnswer']);
+    });
 });
 
 ################################# EXAM GRADES ROUTES ##########################
@@ -401,6 +421,7 @@ Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'section-rati
 // Section Rating - All Roles (View ratings)
 Route::group(['middleware' => ['api', 'auth:admin,trainer,secretary,student'], 'prefix' => 'section-rating'], function () {
     Route::get('/{sectionId}/ratings', [SectionRatingController::class, 'getSectionRatings']);
+    
 });
 
 // Attendance Routes
@@ -422,3 +443,16 @@ Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'trainer'], f
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+// Student Profile Routes
+Route::middleware(['auth:student'])->group(function () {
+    Route::get('/student/profile', [StudentController::class, 'getMyProfile']);
+});
+
+// Trainer Profile Routes
+Route::middleware(['auth:trainer'])->group(function () {
+
+    Route::get('/trainer/profile', [TrainerController::class, 'getMyProfile']);
+       Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
+});
+
+
