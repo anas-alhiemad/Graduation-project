@@ -2,6 +2,7 @@
 namespace App\Services\StudentServices;
 
 use App\Repositories\StudentRepository;
+use Illuminate\Support\Facades\Auth;
 
 class DisplayStudentService 
 {
@@ -28,6 +29,14 @@ class DisplayStudentService
             "student" => $student]);
     }
 
+    public function getMyProfile()
+    {
+        $student = Auth::user();
+        return response()->json([
+            "message" => "Your profile retrieved successfully",
+            "profile" => $student
+        ]);
+    }
 
     public function searchStudent($request)
     {

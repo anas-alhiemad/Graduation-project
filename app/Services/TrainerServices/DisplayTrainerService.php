@@ -2,6 +2,7 @@
 namespace App\Services\TrainerServices;
 
 use App\Repositories\TrainerRepository;
+use Illuminate\Support\Facades\Auth;
 
 class DisplayTrainerService 
 {
@@ -29,6 +30,14 @@ class DisplayTrainerService
             "Trainer" => $trainer]);
     }
 
+    public function getMyProfile()
+    {
+        $trainer = Auth::user();
+        return response()->json([
+            "message" => "Your profile retrieved successfully",
+            "profile" => $trainer
+        ]);
+    }
 
     public function searchTrainer($request)
     {
