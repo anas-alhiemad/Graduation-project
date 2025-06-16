@@ -60,6 +60,17 @@ class SectionStudentService
 
     public function getStudentsInSection($section_id)
     {
+        $user = Auth::user();
+        $section = $this->courseSectionRepository->getById($section_id);
+
+        // Only check trainer authorization if the user is a trainer
+        if ($user instanceof Trainer) {
+            // Verify trainer is assigned to this section
+            if (!$section->trainers()->where('trainers.id', $user->id)->exists()) {
+                throw new \Exception('You are not authorized to view students in this section');
+            }
+        }
+
         $studentsInSection = $this->courseSectionRepository->studentsInSection($section_id);
         return response()->json([
             'message' => "Student in section",
