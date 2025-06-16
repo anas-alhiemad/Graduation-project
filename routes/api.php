@@ -41,6 +41,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionAttendanceController;
+use App\Http\Controllers\SavedCourseController;
 
 
 
@@ -402,6 +403,7 @@ Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'exam-grades'
 
 */
 
+
 // Trainer Rating - Student (Create rating)
 Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'trainer-rating'], function () {
     Route::post('/rate', [TrainerRatingController::class, 'rateTrainer']);
@@ -467,6 +469,7 @@ Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'grades'], fu
     Route::put('/{gradeId}', [GradeController::class, 'update']);
     Route::delete('/{gradeId}', [GradeController::class, 'delete']);
 });
+//Grades Management - Student Routes
 Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'grades'], function () {
     Route::get('/my-grades', [GradeController::class, 'getMyGrades']);
 });
@@ -498,6 +501,14 @@ Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'session-atte
     // Attendance Statistics
     Route::get('/students/{studentId}/sections/{sectionId}/attendance-stats', [SessionAttendanceController::class, 'getStudentAttendanceStats']);
     Route::get('/sections/{sectionId}/attendance-stats', [SessionAttendanceController::class, 'getSectionAttendanceStats']);
+});
+
+// Saved Courses Routes for student 
+Route::group(['middleware' => ['api', 'auth:student']], function () {
+    Route::post('/courses/{courseId}/save', [SavedCourseController::class, 'saveCourse']);
+    Route::delete('/courses/{courseId}/unsave', [SavedCourseController::class, 'unsaveCourse']);
+    Route::get('/saved-courses', [SavedCourseController::class, 'getMySavedCourses']);
+    Route::get('/saved-courses/count', [SavedCourseController::class, 'getSavedCoursesCount']);
 });
 
 
