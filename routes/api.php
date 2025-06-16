@@ -37,6 +37,10 @@ use App\Http\Controllers\SectionStudentSearchController;
 use App\Http\Controllers\SectionQAController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TrainerController;
+use App\Http\Controllers\ExamController;
+use App\Http\Controllers\GradeController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SessionAttendanceController;
 
 
 
@@ -314,7 +318,7 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer'], fun
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::get('/my-courses', [CourseSectionController::class, 'getTrainerCourses']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
-Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
+    Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
 
 });
 
@@ -380,7 +384,7 @@ Route::group(['middleware' => ['api', 'auth:trainer,student'], 'prefix' => 'foru
 });
 
 ################################# EXAM GRADES ROUTES ##########################
-
+/*
 // Exam Grades Management - Trainer Routes
 Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'exam-grades'], function () {
     Route::get('/', [ExamGradeController::class, 'index']);
@@ -396,10 +400,7 @@ Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'exam-grades'
     Route::get('/student/{studentId}', [ExamGradeController::class, 'getStudentGrades']);
 });
 
-// Exam Grades Management - Student Routes
-Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'grades'], function () {
-    Route::get('/my-grades', [ExamGradeController::class, 'getMyGrades']);
-});
+*/
 
 // Trainer Rating - Student (Create rating)
 Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'trainer-rating'], function () {
@@ -424,12 +425,7 @@ Route::group(['middleware' => ['api', 'auth:admin,trainer,secretary,student'], '
     
 });
 
-// Attendance Routes
-Route::middleware('auth:trainer')->group(function () {
-    Route::post('/attendance/mark', [AttendanceController::class, 'markAttendance']);
-    Route::get('/section/{sectionId}/attendance', [AttendanceController::class, 'getSectionAttendance']);
-    Route::get('/student/{studentId}/section/{sectionId}/attendance', [AttendanceController::class, 'getStudentAttendance']);
-});
+
 
 ################################# STUDENT SEARCH ROUTES ##########################
 
@@ -453,6 +449,55 @@ Route::middleware(['auth:trainer'])->group(function () {
 
     Route::get('/trainer/profile', [TrainerController::class, 'getMyProfile']);
        Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
+});
+
+// Exam Routes
+Route::group(['middleware' =>  ['api', 'auth:trainer'], 'prefix' => 'exams'], function () {
+    Route::post('/', [ExamController::class, 'create']);
+    Route::get('/section/{sectionId}', [ExamController::class, 'getBySection']);
+    Route::put('/{examId}', [ExamController::class, 'update']);
+    Route::delete('/{examId}', [ExamController::class, 'delete']);
+});
+
+// Grade Routes
+Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'grades'], function () {
+    Route::post('/', [GradeController::class, 'create']);
+    Route::get('/exam/{examId}', [GradeController::class, 'getByExam']);
+    Route::get('/student/{studentId}', [GradeController::class, 'getByStudent']);
+    Route::put('/{gradeId}', [GradeController::class, 'update']);
+    Route::delete('/{gradeId}', [GradeController::class, 'delete']);
+});
+Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'grades'], function () {
+    Route::get('/my-grades', [GradeController::class, 'getMyGrades']);
+});
+
+// Session routes
+Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'session'], function () {
+    Route::post('/sessions', [SessionController::class, 'create']);
+    Route::get('/sections/{sectionId}/sessions', [SessionController::class, 'getBySection']);
+    Route::put('/sessions/{sessionId}', [SessionController::class, 'update']);
+    Route::delete('/sessions/{sessionId}', [SessionController::class, 'delete']);
+});
+
+// Session Attendance Routes
+Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'session-attendance'], function () {
+    // Session Attendance
+    Route::post('/sessions/{sessionId}/attendance', [SessionAttendanceController::class, 'markAttendance']);
+    Route::get('/sessions/{sessionId}/attendance', [SessionAttendanceController::class, 'getSessionAttendance']);
+    
+    // Student Attendance
+    Route::get('/students/{studentId}/attendance', [SessionAttendanceController::class, 'getStudentAttendance']);
+    
+    // Section Attendance
+    Route::get('/sections/{sectionId}/attendance', [SessionAttendanceController::class, 'getSectionAttendance']);
+    
+    // Edit and Delete Attendance
+    Route::put('/attendance/{attendanceId}', [SessionAttendanceController::class, 'editAttendance']);
+    Route::delete('/attendance/{attendanceId}', [SessionAttendanceController::class, 'deleteAttendance']);
+    
+    // Attendance Statistics
+    Route::get('/students/{studentId}/sections/{sectionId}/attendance-stats', [SessionAttendanceController::class, 'getStudentAttendanceStats']);
+    Route::get('/sections/{sectionId}/attendance-stats', [SessionAttendanceController::class, 'getSectionAttendanceStats']);
 });
 
 
