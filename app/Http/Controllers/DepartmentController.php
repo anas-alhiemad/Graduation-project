@@ -1,42 +1,38 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\DepartmentService\DepartmentService;
 use App\Http\Requests\DepartmentRequest\DepartmentRequest;
+use App\Services\DepartmentServices\CreateDepartmentService;
+use App\Services\DepartmentServices\UpdateDepartmentService;
+use App\Services\DepartmentServices\DeleteDepartmentService;
+use App\Services\DepartmentServices\DisplayAllDepartmentsService;
+use App\Services\DepartmentServices\DisplayDepartmentByIdService;
 
 class DepartmentController extends Controller
 {
-    protected $departmentService;
-
-    public function __construct(DepartmentService $departmentService)
+    public function index(DisplayAllDepartmentsService $service)
     {
-        $this->departmentService = $departmentService;
+        return $service->handle();
     }
 
-    public function index()
+    public function show($id, DisplayDepartmentByIdService $service)
     {
-        return $this->departmentService->getAll();
+        return $service->handle($id);
     }
 
-    public function show($id)
+    public function store(DepartmentRequest $request, CreateDepartmentService $service)
     {
-        return $this->departmentService->getById($id);
+        return $service->handle($request);
     }
 
-    public function store(DepartmentRequest $request)
+    public function update(DepartmentRequest $request, $id, UpdateDepartmentService $service)
     {
-        return $this->departmentService->create($request);
+        return $service->handle($id, $request);
     }
 
-    public function update(DepartmentRequest $request, $id)
+    public function destroy($id, DeleteDepartmentService $service)
     {
-        return $this->departmentService->update($id, $request);
+        return $service->handle($id);
     }
-
-    public function destroy($id)
-    {
-        return $this->departmentService->delete($id);
-    }
-} 
+}

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\ReportService\ReportService;
 use App\Http\Requests\ReportRequest\ReportRequest;
+use App\Http\Requests\ReportRequest\CreateReportRequest;
+
 
 class ReportController extends Controller
 {
@@ -25,11 +27,10 @@ class ReportController extends Controller
         return $this->reportService->getById($id);
     }
 
-    public function store(ReportRequest $request)
-    {
-        return $this->reportService->create($request);
-    }
-
+    public function store(CreateReportRequest $request)
+{
+    return $this->reportService->create($request);
+}
     public function update(ReportRequest $request, $id)
     {
         return $this->reportService->update($id, $request);
