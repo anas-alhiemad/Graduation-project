@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories;
 
+use App\Models\Trainer;
 use App\Models\SectionTrainer;
 use App\Repositories\BaseRepository;
 use App\Interfaces\RepositoryInterface;
@@ -19,7 +20,8 @@ class SectionTrainerRepository  extends BaseRepository implements RepositoryInte
     }
 
     public function exists(array $conditions)
-{
-    return $this->model::where($conditions)->exists();
-}
+    {
+        return $this->model::where($conditions)->exists();
+    }
+
 }
