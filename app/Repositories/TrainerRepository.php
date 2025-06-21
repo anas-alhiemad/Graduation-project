@@ -45,4 +45,8 @@ class TrainerRepository extends BaseRepository implements RepositoryInterface
         return $trainer;
     }
 
+    public function getSchedule(Trainer $trainer) 
+    {
+        return $trainer->sections()->where('state','in_progress')->with(['course', 'weekDays'])->get();
+    }
 }

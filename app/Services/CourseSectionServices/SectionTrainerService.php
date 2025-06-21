@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\CourseSectionServices;
 
+use App\Repositories\TrainerRepository;
+use App\Repositories\WeekDayRepository;
 use App\Repositories\CourseSectionRepository;
 use App\Repositories\SectionTrainerRepository;
 
@@ -8,11 +10,15 @@ class SectionTrainerService
 {
     protected $sectionTrainerRepository;
     protected $courseSectionRepository;
-    
-    public function __construct(CourseSectionRepository $courseSectionRepository,SectionTrainerRepository $sectionTrainerRepository)
+    protected $trainerRepository;
+    protected $weekDayRepository;
+
+    public function __construct(CourseSectionRepository $courseSectionRepository,SectionTrainerRepository $sectionTrainerRepository,TrainerRepository  $trainerRepository, WeekDayRepository $weekDayRepository)
     {
         $this->courseSectionRepository = $courseSectionRepository;
         $this->sectionTrainerRepository = $sectionTrainerRepository;
+        $this->trainerRepository = $trainerRepository;
+        $this->weekDayRepository = $weekDayRepository;
       
     }
 
@@ -87,5 +93,41 @@ public function indexTrainerWithCourse()
         "Trainers" => $trainersWithCourse
     ]);
 }
+
+    public function getTrainerSchedule($name_day)
+    {
+        $dayNameToId = $this->weekDayRepository->dayNameToId();
+
+        if (!isset($dayNameToId[$name_day])) {
+            return response()->json(['message' => 'Invalid day name'], 400);
+        }
+
+        $dayId = $dayNameToId[$name_day];
+        $trainer = auth()->user();
+
+        $schedule = $this->trainerRepository->getSchedule($trainer);
+
+        $events = [];
+
+        foreach ($schedule as $section) {
+            foreach ($section->weekDays as $day) {
+                if ($day->id != $dayId) {
+                    continue;
+                }
+
+                $events[] = [
+                    'course'     => $section->course,
+                    'section' => collect($section)->only(['id', 'name', 'seatsOfNumber', 'reservedSeats', 'state',
+                                                        'startDate', 'endDate', 'courseId', 'created_at', 'updated_at']),
+                    'day'        => $day,
+                    'start_time' => $day->pivot->start_time,
+                    'end_time'   => $day->pivot->end_time,
+                ];
+            }
+        }
+
+        return response()->json([
+            'message' => "Schedule your tasks today",'Events' => $events ],200);       
+    }
 
 }

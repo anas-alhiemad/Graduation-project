@@ -210,7 +210,7 @@ Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student/reserv
 
 
 Route::group(['middleware' => ['api','auth:student'],'prefix' => 'student/events'], function () {
-    Route::get('/getMyScheduleByDay/{name_day}', [CourseSectionController::class, 'GetMyScheduleByDay']);
+    Route::get('/getMyScheduleByDay/{name_day}', [CourseSectionController::class, 'GetMyScheduleByDayStudent']);
 });
 
 ################################# SECRETARY ROUTES ##########################
@@ -352,6 +352,12 @@ Route::group(['middleware' => ['api','Auth_student_or_secretary'],'prefix' => 'q
     Route::get('/showQuizById/{quiz_id}', [QuizController::class, 'ShowQuizById']);
     Route::post('/answerQuestion/{option_id}', [QuizController::class, 'answerQuestion']);
 
+});
+
+################################# Quiz ROUTES ##########################
+
+Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/events'], function () {
+    Route::get('/getMyScheduleByDay/{name_day}', [CourseSectionController::class, 'GetMyScheduleByDayTrainer']);
 });
 
 ################################# FORUM ROUTES ##########################
