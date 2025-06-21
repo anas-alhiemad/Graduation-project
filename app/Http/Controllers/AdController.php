@@ -2,79 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AdService;
-use Illuminate\Http\Request;
+use App\Services\AdService\CreateAdService;
+use App\Services\AdService\UpdateAdService;
+use App\Services\AdService\DeleteAdService;
+use App\Services\AdService\DisplayAdService;
+use App\Http\Requests\AdRequest\CreateAdRequest;
+use App\Http\Requests\AdRequest\UpdateAdRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Validator;
 
 class AdController extends Controller
 {
-    protected $adService;
+    protected $createService;
+    protected $updateService;
+    protected $deleteService;
+    protected $displayService;
 
-    public function __construct(AdService $adService)
-    {
-        $this->adService = $adService;
+    public function __construct(
+        CreateAdService $createService,
+        UpdateAdService $updateService,
+        DeleteAdService $deleteService,
+        DisplayAdService $displayService
+    ) {
+        $this->createService = $createService;
+        $this->updateService = $updateService;
+        $this->deleteService = $deleteService;
+        $this->displayService = $displayService;
     }
 
     public function index(): JsonResponse
     {
-        return $this->adService->getAllAds();
+        return $this->displayService->getAllAds();
     }
 
     public function show($id): JsonResponse
     {
-        return $this->adService->getAdById($id);
+        return $this->displayService->getAdById($id);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(CreateAdRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        return $this->adService->createAd($request->all());
+        return $this->createService->handle($request);
     }
 
-    public function update(Request $request, $id): JsonResponse
+    public function update(UpdateAdRequest $request, $id): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'start_date' => 'sometimes|required|date',
-            'end_date' => 'sometimes|required|date|after:start_date'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        return $this->adService->updateAd($id, $request->all());
+        return $this->updateService->handle($id, $request);
     }
 
     public function destroy($id): JsonResponse
     {
-        return $this->adService->deleteAd($id);
+        return $this->deleteService->handle($id);
     }
 
     public function active(): JsonResponse
     {
-        return $this->adService->getActiveAds();
+        return $this->displayService->getActiveAds();
     }
-} 
+}
