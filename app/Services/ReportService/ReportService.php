@@ -42,28 +42,19 @@ class ReportService
         ]);
     }
 
-    public function create($request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'file' => 'required|file|max:10240' // 10MB max
-        ]);
+public function create($request)
+{
+    $data = $request->validated();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+    $data['file'] = 'upload/' . $request->file('file')->store('reports', 'public_upload');
+    $data['secretary_id'] = auth()->id();
 
-        $data = $request->validated();
-        $data['file'] = 'upload/' . $request->file('file')->store('reports', 'public_upload');
-        $data['secretary_id'] = auth()->id();
-        
-        $report = $this->reportRepository->create($data);
-        return response()->json([
-            "message" => "Report has been created successfully",
-            "report" => $report
-        ], 200);
-    }
+    $report = $this->reportRepository->create($data);
+    return response()->json([
+        "message" => "Report has been created successfully",
+        "report" => $report
+    ], 200);
+}
 
     public function update($id, $request)
     {

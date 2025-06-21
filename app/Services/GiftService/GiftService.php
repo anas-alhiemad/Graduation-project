@@ -3,9 +3,7 @@
 namespace App\Services\GiftService;
 
 use App\Repositories\GiftRepository;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class GiftService
 {
@@ -44,24 +42,12 @@ class GiftService
 
     public function create($request)
     {
-        $validator = Validator::make($request->all(), [
-            'description' => 'required|string',
-            'date' => 'required|date',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'student_id' => 'nullable|exists:students,id',
-            'secretary_id' => 'nullable|exists:secretaries,id'
-        ]);
+        $data = $request->validated();
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = $request->all();
-        
         if ($request->hasFile('photo')) {
             $data['photo'] = 'upload/' . $request->file('photo')->store('giftPhotos', 'public_upload');
         }
-        
+
         $gift = $this->giftRepository->create($data);
         return response()->json([
             "message" => "Gift has been created successfully",
@@ -72,41 +58,18 @@ class GiftService
     public function update($id, $request)
     {
         $gift = $this->giftRepository->find($id);
-        
-        if (!$gift) {
-            return response()->json([
-                "message" => "Gift not found"
-            ], 404);
-        }
 
-        $validator = Validator::make($request->all(), [
-            'description' => 'required|string',
-            'date' => 'required|date',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'student_id' => 'nullable|exists:students,id',
-            'secretary_id' => 'nullable|exists:secretaries,id'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $data = $request->all();
-        
         if ($request->hasFile('photo')) {
             if ($gift->photo && file_exists(public_path($gift->photo))) {
                 unlink(public_path($gift->photo));
             }
+            $data = $request->validated();
             $data['photo'] = 'upload/' . $request->file('photo')->store('giftPhotos', 'public_upload');
+        } else {
+            $data = $request->validated();
         }
-            
+
         $updatedGift = $this->giftRepository->update($id, $data);
-        
-        if (!$updatedGift) {
-            return response()->json([
-                "message" => "Failed to update gift"
-            ], 500);
-        }
 
         return response()->json([
             "message" => "Gift has been updated successfully",
@@ -117,19 +80,13 @@ class GiftService
     public function delete($id)
     {
         $gift = $this->giftRepository->find($id);
-        
-        if (!$gift) {
-            return response()->json([
-                "message" => "Gift not found"
-            ], 404);
-        }
 
         if ($gift->photo) {
             Storage::disk('public_upload')->delete(str_replace('upload/', '', $gift->photo));
         }
-        
+
         $this->giftRepository->delete($id);
-        
+
         return response()->json([
             'message' => 'Gift has been deleted successfully'
         ], 200);
@@ -168,4 +125,4 @@ class GiftService
             ]
         ]);
     }
-} 
+}
