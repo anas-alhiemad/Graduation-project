@@ -3,37 +3,48 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\ComplaintService\ComplaintService;
+use App\Http\Requests\ComplaintRequest\CreateComplaintRequest;
+use App\Services\ComplaintService\CreateComplaintService;
+use App\Services\ComplaintService\DisplayComplaintService;
+use App\Services\ComplaintService\DeleteComplaintService;
 
 class ComplaintController extends Controller
 {
-    protected $complaintService;
+    protected $createComplaintService;
+    protected $displayComplaintService;
+    protected $deleteComplaintService;
 
-    public function __construct(ComplaintService $complaintService)
-    {
-        $this->complaintService = $complaintService;
+    public function __construct(
+        CreateComplaintService $createComplaintService,
+        DisplayComplaintService $displayComplaintService,
+        DeleteComplaintService $deleteComplaintService
+    ) {
+        $this->createComplaintService = $createComplaintService;
+        $this->displayComplaintService = $displayComplaintService;
+        $this->deleteComplaintService = $deleteComplaintService;
     }
 
     public function index(Request $request)
     {
         if ($request->has('search')) {
-            return $this->complaintService->search($request->search);
+            return $this->displayComplaintService->search($request->search);
         }
-        return $this->complaintService->getAll();
+
+        return $this->displayComplaintService->getAll();
     }
 
     public function show($id)
     {
-        return $this->complaintService->getById($id);
+        return $this->displayComplaintService->getById($id);
     }
 
-    public function store(Request $request)
+    public function store(CreateComplaintRequest $request)
     {
-        return $this->complaintService->create($request);
+        return $this->createComplaintService->handle($request);
     }
 
     public function destroy($id)
     {
-        return $this->complaintService->delete($id);
+        return $this->deleteComplaintService->handle($id);
     }
-} 
+}
