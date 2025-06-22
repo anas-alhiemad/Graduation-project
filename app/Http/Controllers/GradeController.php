@@ -1,48 +1,64 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Services\GradeService;
-use Illuminate\Http\Request;
+use App\Services\GradeServices\CreateGradeService;
+use App\Services\GradeServices\DisplayGradeService;
+use App\Services\GradeServices\UpdateGradeService;
+use App\Services\GradeServices\DeleteGradeService;
+use App\Http\Requests\GradeRequest\CreateGradeRequest;
+use App\Http\Requests\GradeRequest\UpdateGradeRequest;
 use Illuminate\Support\Facades\Auth;
 
 class GradeController extends Controller
 {
-    protected $gradeService;
+    protected $createGradeService;
+    protected $displayGradeService;
+    protected $updateGradeService;
+    protected $deleteGradeService;
 
-    public function __construct(GradeService $gradeService)
-    {
-        $this->gradeService = $gradeService;
+    public function __construct(
+        CreateGradeService $createGradeService,
+        DisplayGradeService $displayGradeService,
+        UpdateGradeService $updateGradeService,
+        DeleteGradeService $deleteGradeService
+    ) {
+        $this->createGradeService = $createGradeService;
+        $this->displayGradeService = $displayGradeService;
+        $this->updateGradeService = $updateGradeService;
+        $this->deleteGradeService = $deleteGradeService;
     }
 
-    public function create(Request $request)
+    public function create(CreateGradeRequest $request)
     {
-        return $this->gradeService->createGrade($request);
+        return $this->createGradeService->create($request->validated());
     }
 
-    public function getByExam(Request $request, $examId)
+    public function getByExam($examId)
     {
-        return $this->gradeService->getGradesByExam($examId, $request);
+        $perPage = request()->input('per_page', 10);
+        return $this->displayGradeService->getGradesByExam($examId, $perPage);
     }
 
-    public function getByStudent(Request $request, $studentId)
+    public function getByStudent($studentId)
     {
-        return $this->gradeService->getGradesByStudent($studentId, $request);
+        $perPage = request()->input('per_page', 10);
+        return $this->displayGradeService->getGradesByStudent($studentId, $perPage);
     }
 
-    public function update(Request $request, $gradeId)
+    public function update(UpdateGradeRequest $request, $gradeId)
     {
-        return $this->gradeService->updateGrade($request, $gradeId);
+        return $this->updateGradeService->update($request->validated(), $gradeId);
     }
 
     public function delete($gradeId)
     {
-        return $this->gradeService->deleteGrade($gradeId);
+        return $this->deleteGradeService->delete($gradeId);
     }
-    public function getMyGrades(Request $request)
-{
-    $studentId = Auth::id(); 
-    return $this->gradeService->getGradesByStudent($studentId, $request);
-}
 
-} 
+    public function getMyGrades()
+    {
+        $studentId = Auth::id();
+        $perPage = request()->input('per_page', 10);
+        return $this->displayGradeService->getGradesByStudent($studentId, $perPage);
+    }
+}

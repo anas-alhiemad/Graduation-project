@@ -4,7 +4,7 @@ namespace App\Http\Requests\ReportRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReportRequest extends FormRequest
+class UpdateReportRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,7 +16,7 @@ class ReportRequest extends FormRequest
         return [
             'name' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
-            'file' => 'sometimes|file|max:10240' // 10MB max
+            'file' => 'sometimes|file|max:10240'
         ];
     }
 
@@ -24,8 +24,8 @@ class ReportRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $allowedFields = ['name', 'description', 'file'];
-            
-            if (!$this->hasAny($allowedFields)) {
+
+            if (!$this->hasAnyField($allowedFields)) {
                 $validator->errors()->add('fields', 'You must provide at least one field to update.');
             }
 
@@ -36,4 +36,14 @@ class ReportRequest extends FormRequest
             }
         });
     }
-} 
+
+    protected function hasAnyField(array $fields): bool
+    {
+        foreach ($fields as $field) {
+            if ($this->has($field)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

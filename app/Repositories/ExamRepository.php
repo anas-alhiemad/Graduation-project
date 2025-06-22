@@ -32,4 +32,4 @@ class ExamRepository
     {
         return Exam::destroy($id);
     }
-} 
+}

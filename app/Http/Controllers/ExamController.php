@@ -2,35 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\ExamService;
 use Illuminate\Http\Request;
+use App\Http\Requests\ExamRequest\CreateExamRequest;
+use App\Http\Requests\ExamRequest\UpdateExamRequest;
+use App\Services\ExamService\CreateExamService;
+use App\Services\ExamService\DisplayExamService;
+use App\Services\ExamService\UpdateExamService;
+use App\Services\ExamService\DeleteExamService;
 
 class ExamController extends Controller
 {
-    protected $examService;
+    protected $createExamService;
+    protected $displayExamService;
+    protected $updateExamService;
+    protected $deleteExamService;
 
-    public function __construct(ExamService $examService)
-    {
-        $this->examService = $examService;
+    public function __construct(
+        CreateExamService $createExamService,
+        DisplayExamService $displayExamService,
+        UpdateExamService $updateExamService,
+        DeleteExamService $deleteExamService
+    ) {
+        $this->createExamService = $createExamService;
+        $this->displayExamService = $displayExamService;
+        $this->updateExamService = $updateExamService;
+        $this->deleteExamService = $deleteExamService;
     }
 
-    public function create(Request $request)
+    public function create(CreateExamRequest $request)
     {
-        return $this->examService->createExam($request);
+        return $this->createExamService->handle($request);
     }
 
     public function getBySection(Request $request, $sectionId)
     {
-        return $this->examService->getExamsBySection($sectionId, $request);
+        return $this->displayExamService->handle($sectionId, $request);
     }
 
-    public function update(Request $request, $examId)
+    public function update(UpdateExamRequest $request, $examId)
     {
-        return $this->examService->updateExam($request, $examId);
+        return $this->updateExamService->handle($request, $examId);
     }
 
     public function delete($examId)
     {
-        return $this->examService->deleteExam($examId);
+        return $this->deleteExamService->handle($examId);
     }
-} 
+}

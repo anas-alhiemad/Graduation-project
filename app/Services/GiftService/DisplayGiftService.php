@@ -3,9 +3,8 @@
 namespace App\Services\GiftService;
 
 use App\Repositories\GiftRepository;
-use Illuminate\Support\Facades\Storage;
 
-class GiftService
+class DisplayGiftService
 {
     protected $giftRepository;
 
@@ -38,58 +37,6 @@ class GiftService
             "message" => "The gift details.",
             "gift" => $gift
         ]);
-    }
-
-    public function create($request)
-    {
-        $data = $request->validated();
-
-        if ($request->hasFile('photo')) {
-            $data['photo'] = 'upload/' . $request->file('photo')->store('giftPhotos', 'public_upload');
-        }
-
-        $gift = $this->giftRepository->create($data);
-        return response()->json([
-            "message" => "Gift has been created successfully",
-            "gift" => $gift
-        ], 200);
-    }
-
-    public function update($id, $request)
-    {
-        $gift = $this->giftRepository->find($id);
-
-        if ($request->hasFile('photo')) {
-            if ($gift->photo && file_exists(public_path($gift->photo))) {
-                unlink(public_path($gift->photo));
-            }
-            $data = $request->validated();
-            $data['photo'] = 'upload/' . $request->file('photo')->store('giftPhotos', 'public_upload');
-        } else {
-            $data = $request->validated();
-        }
-
-        $updatedGift = $this->giftRepository->update($id, $data);
-
-        return response()->json([
-            "message" => "Gift has been updated successfully",
-            "gift" => $updatedGift
-        ], 200);
-    }
-
-    public function delete($id)
-    {
-        $gift = $this->giftRepository->find($id);
-
-        if ($gift->photo) {
-            Storage::disk('public_upload')->delete(str_replace('upload/', '', $gift->photo));
-        }
-
-        $this->giftRepository->delete($id);
-
-        return response()->json([
-            'message' => 'Gift has been deleted successfully'
-        ], 200);
     }
 
     public function getStudentGifts($studentId)

@@ -8,7 +8,7 @@ class CreateReportRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // يمكن تعديلها حسب الحاجة لصلاحيات محددة
+        return true;
     }
 
     public function rules(): array
@@ -16,7 +16,8 @@ class CreateReportRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'file' => 'required|file|max:10240', // 10MB
+            'file' => 'required|file|max:10240'
         ];
     }
 }
+
