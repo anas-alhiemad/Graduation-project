@@ -8,7 +8,7 @@ class CreateComplaintRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // يمكنك تخصيص هذا حسب صلاحيات المستخدم
+        return true; 
     }
 
     public function rules(): array

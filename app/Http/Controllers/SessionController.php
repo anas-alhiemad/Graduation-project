@@ -2,59 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\SessionService;
+use App\Http\Requests\SessionRequest\CreateSessionRequest;
+use App\Http\Requests\SessionRequest\UpdateSessionRequest;
+use App\Services\SessionServices\CreateSessionService;
+use App\Services\SessionServices\UpdateSessionService;
+use App\Services\SessionServices\DeleteSessionService;
+use App\Services\SessionServices\DisplaySessionService;
 use Illuminate\Http\Request;
 
 class SessionController extends Controller
 {
-    protected $sessionService;
+    protected $createSessionService;
+    protected $updateSessionService;
+    protected $deleteSessionService;
+    protected $displaySessionService;
 
-    public function __construct(SessionService $sessionService)
-    {
-        $this->sessionService = $sessionService;
+    public function __construct(
+        CreateSessionService $createSessionService,
+        UpdateSessionService $updateSessionService,
+        DeleteSessionService $deleteSessionService,
+        DisplaySessionService $displaySessionService
+    ) {
+        $this->createSessionService  = $createSessionService;
+        $this->updateSessionService  = $updateSessionService;
+        $this->deleteSessionService  = $deleteSessionService;
+        $this->displaySessionService = $displaySessionService;
     }
 
-    public function create(Request $request)
+    public function create(CreateSessionRequest $request)
     {
         try {
-            return $this->sessionService->createSession($request);
+            return $this->createSessionService->create($request);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 403);
+            return response()->json(['message' => $e->getMessage()], 403);
         }
     }
 
     public function getBySection(Request $request, $sectionId)
     {
         try {
-            return $this->sessionService->getSessionsBySection($sectionId, $request);
+            return $this->displaySessionService->getBySection($sectionId, $request);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 403);
+            return response()->json(['message' => $e->getMessage()], 403);
         }
     }
 
-    public function update(Request $request, $sessionId)
+    public function update(UpdateSessionRequest $request, $sessionId)
     {
         try {
-            return $this->sessionService->updateSession($request, $sessionId);
+            return $this->updateSessionService->update($request, $sessionId);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 403);
+            return response()->json(['message' => $e->getMessage()], 403);
         }
     }
 
     public function delete($sessionId)
     {
         try {
-            return $this->sessionService->deleteSession($sessionId);
+            return $this->deleteSessionService->delete($sessionId);
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 403);
+            return response()->json(['message' => $e->getMessage()], 403);
         }
     }
-} 
+}
