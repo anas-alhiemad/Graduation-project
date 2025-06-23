@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\CourseSectionServices;
+namespace App\Services\EvaluationServices;
 
 use App\Models\Student;
 use App\Models\Trainer;
@@ -14,8 +14,7 @@ class TrainerRatingService
     public function rateTrainer($trainerId, $sectionId, $rating, $comment = null)
     {
         $student = Auth::user();
-        
-        // Validate that the student is in the section
+
         $isInSection = $student->sections()
             ->where('course_sections.id', $sectionId)
             ->exists();
@@ -24,7 +23,6 @@ class TrainerRatingService
             throw new \Exception('You are not enrolled in this section.');
         }
 
-        // Validate that the trainer is in the section
         $isTrainerInSection = CourseSection::find($sectionId)
             ->trainers()
             ->where('trainers.id', $trainerId)
@@ -34,7 +32,6 @@ class TrainerRatingService
             throw new \Exception('This trainer is not assigned to this section.');
         }
 
-        // Validate rating range
         if ($rating < 1 || $rating > 5) {
             throw new \Exception('Rating must be between 1 and 5.');
         }
@@ -68,4 +65,4 @@ class TrainerRatingService
             ->where('course_section_id', $sectionId)
             ->avg('rating');
     }
-} 
+}

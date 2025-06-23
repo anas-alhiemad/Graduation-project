@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\CourseSectionServices\SectionRatingService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\EvaluationRequests\RateSectionRequest;
+use App\Services\EvaluationServices\SectionRatingService;
+use Illuminate\Http\JsonResponse;
 
 class SectionRatingController extends Controller
 {
@@ -16,37 +15,29 @@ class SectionRatingController extends Controller
         $this->sectionRatingService = $sectionRatingService;
     }
 
-    public function rateSection(Request $request)
+    public function rateSection(RateSectionRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'section_id' => 'required|exists:course_sections,id',
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:500'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+        $data = $request->validated();
 
         try {
             $rating = $this->sectionRatingService->rateSection(
-                $request->section_id,
-                $request->rating,
-                $request->comment
+                $data['section_id'],
+                $data['rating'],
+                $data['comment'] ?? null
             );
 
             return response()->json([
                 'message' => 'Section rating submitted successfully',
-                'data' => $rating
+                'data'    => $rating,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
 
-    public function getSectionRatings($sectionId)
+    public function getSectionRatings($sectionId): JsonResponse
     {
         try {
             $ratings = $this->sectionRatingService->getSectionRatings($sectionId);
@@ -54,12 +45,12 @@ class SectionRatingController extends Controller
 
             return response()->json([
                 'ratings' => $ratings,
-                'average_rating' => $averageRating
+                'average_rating' => $averageRating,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
-} 
+}

@@ -1,9 +1,6 @@
 <?php
+namespace App\Services\EvaluationServices;
 
-namespace App\Services\CourseSectionServices;
-
-use App\Models\Student;
-use App\Models\CourseSection;
 use App\Models\SectionRating;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +10,7 @@ class SectionRatingService
     public function rateSection($sectionId, $rating, $comment = null)
     {
         $student = Auth::user();
-        
-        // Validate that the student is in the section
+
         $isInSection = $student->sections()
             ->where('course_sections.id', $sectionId)
             ->exists();
@@ -23,7 +19,6 @@ class SectionRatingService
             throw new \Exception('You are not enrolled in this section.');
         }
 
-        // Validate rating range
         if ($rating < 1 || $rating > 5) {
             throw new \Exception('Rating must be between 1 and 5.');
         }
@@ -54,4 +49,4 @@ class SectionRatingService
         return SectionRating::where('course_section_id', $sectionId)
             ->avg('rating');
     }
-} 
+}
