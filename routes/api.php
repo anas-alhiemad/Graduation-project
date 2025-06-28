@@ -173,6 +173,22 @@ Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'ad
     Route::post('/deleteEmployee/{employeeId}', [CRUDEmployeeController::class, 'DeleteEmployee']);
 });
 
+// Admin View Trainers Only
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/trainer'], function () {
+    Route::get('/showAllTrainer', [CRUDTrainerController::class, 'ShowAllTrainer']);
+    Route::get('/showTrainerById/{trainerId}', [CRUDTrainerController::class, 'ShowTrainerById']);
+    Route::get('/searchTrainer/{querySearch}', [CRUDTrainerController::class, 'SearchTrainer']);
+    Route::get('/indexTrainerWithCourse', [CourseSectionController::class, 'IndexTrainerWithCourse']);
+    Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
+});
+
+// Admin View Students Only
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/student'], function () {
+    Route::get('/showAllStudent', [CRUDStudentController::class, 'ShowAllStudent']);
+    Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
+    Route::get('/searchStudent/{querySearch}', [CRUDStudentController::class, 'SearchStudent']);
+});
+
 ################################# STUDENT ROUTES ##########################
 
 // Student Department & Course Access
@@ -390,24 +406,6 @@ Route::group(['middleware' => ['api', 'auth:trainer,student'], 'prefix' => 'foru
     });
 });
 
-################################# EXAM GRADES ROUTES ##########################
-/*
-// Exam Grades Management - Trainer Routes
-Route::group(['middleware' => ['api', 'auth:trainer'], 'prefix' => 'exam-grades'], function () {
-    Route::get('/', [ExamGradeController::class, 'index']);
-    Route::post('/', [ExamGradeController::class, 'store']);
-    Route::get('/{id}', [ExamGradeController::class, 'show']);
-    Route::put('/{id}', [ExamGradeController::class, 'update']);
-    Route::delete('/{id}', [ExamGradeController::class, 'destroy']);
-    
-    // Helper routes for trainers
-    Route::get('/section/{sectionId}', [ExamGradeController::class, 'getSectionGrades']);
-    Route::get('/trainer/{trainerId}', [ExamGradeController::class, 'getTrainerGrades']);
-    Route::get('/section/{sectionId}/statistics', [ExamGradeController::class, 'getSectionStatistics']);
-    Route::get('/student/{studentId}', [ExamGradeController::class, 'getStudentGrades']);
-});
-
-*/
 
 
 // Trainer Rating - Student (Create rating)
