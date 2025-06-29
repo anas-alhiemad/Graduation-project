@@ -53,5 +53,9 @@ class CourseRepository extends BaseRepository implements RepositoryInterface
         ->where('department_id', $departmentId)
         ->paginate(10); 
 }
+public function getCoursesByDepartmentIds($departmentIds)
+{
+    return $this->model::whereIn('department_id', $departmentIds)->get();
+}
 
 } 
