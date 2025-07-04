@@ -18,25 +18,37 @@ class CreateSessionService
         $this->courseSectionRepository = $courseSectionRepository;
     }
 
-    public function create($request)
-    {
-        $user = Auth::user();
+public function create($request)
+{
+    $user = Auth::user();
 
-        if (!($user instanceof Trainer)) {
-            throw new \Exception('Only trainers can create sessions');
-        }
-
-        $section = $this->courseSectionRepository->getById($request->course_section_id);
-
-        if (!$section->trainers()->where('trainers.id', $user->id)->exists()) {
-            throw new \Exception('You are not authorized to create sessions for this section');
-        }
-
-        $session = $this->sessionRepository->create($request->validated());
-
-        return response()->json([
-            'message' => 'Session created successfully',
-            'session' => $session
-        ]);
+    if (!($user instanceof Trainer)) {
+        throw new \Exception('Only trainers can create sessions');
     }
+
+    $section = $this->courseSectionRepository->getById($request->course_section_id);
+
+     if ($section->state !== 'in_progress') {
+        throw new \Exception('Cannot add sessions unless the section is in progress');
+    }
+
+    if (!$section->trainers()->where('trainers.id', $user->id)->exists()) {
+        throw new \Exception('You are not authorized to create sessions for this section');
+    }
+
+    
+    $currentSessionsCount = $section->sessions()->count();
+    if ($currentSessionsCount >= $section->total_sessions) {
+        throw new \Exception('You have reached the maximum number of sessions allowed for this course section');
+    }
+
+    $session = $this->sessionRepository->create($request->validated());
+
+    return response()->json([
+        'message' => 'Session created successfully',
+        'session' => $session
+    ]);
+}
+
+
 }
