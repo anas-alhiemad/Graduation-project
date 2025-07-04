@@ -24,4 +24,9 @@ class Session extends Model
     {
         return $this->belongsTo(CourseSection::class);
     }
+    public function attendances()
+{
+    return $this->hasMany(SessionAttendance::class);
+}
+
 }

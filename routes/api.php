@@ -431,7 +431,14 @@ Route::group(['middleware' => ['api', 'auth:student'], 'prefix' => 'section-rati
 Route::group(['middleware' => ['api', 'auth:admin,trainer,secretary,student'], 'prefix' => 'section-rating'], function () {
     Route::get('/{sectionId}/ratings', [SectionRatingController::class, 'getSectionRatings']);
     
+    
 });
+
+// showProgressForCourseSection- All Roles 
+Route::group(['middleware' => ['api', 'auth:admin,trainer,secretary,student'], 'prefix' => 'course-sections'], function () {
+    Route::get('/{sectionId}/progress', [CourseSectionController::class, 'showProgress']);
+});
+
 
 
 
@@ -521,5 +528,4 @@ Route::group(['middleware' => ['api', 'auth:student']], function () {
     Route::get('/saved-courses', [SavedCourseController::class, 'getMySavedCourses']);
     Route::get('/saved-courses/count', [SavedCourseController::class, 'getSavedCoursesCount']);
 });
-
 

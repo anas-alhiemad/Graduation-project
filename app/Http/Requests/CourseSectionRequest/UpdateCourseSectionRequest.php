@@ -26,7 +26,8 @@ class UpdateCourseSectionRequest extends FormRequest
             'seatsOfNumber'     => 'sometimes|required|integer',
             'startDate'         => 'sometimes|required|date',
             'endDate'           => 'sometimes|required|date|after_or_equal:startDate',
-            'state'             => 'sometimes|required|in:pending,in_progress,finished', 
+            'state'             => 'sometimes|required|in:pending,in_progress,finished',
+            'total_sessions' => 'sometimes|required|integer|min:1', 
             'days'              => 'sometimes|required|array',
             'days.*.start_time' => 'required_with:days|date_format:H:i',
             'days.*.end_time'   => 'required_with:days|date_format:H:i|after:days.*.start_time',  
@@ -37,7 +38,7 @@ class UpdateCourseSectionRequest extends FormRequest
     {
         $validator->after(function ($validator) {
             $allowedFields = [
-                'name', 'seatsOfNumber', 'startDate', 'endDate', 'state', 'days'
+                'name', 'seatsOfNumber', 'startDate', 'endDate', 'state', 'total_sessions', 'days'
             ];
 
             if (!$this->hasAny($allowedFields)) {

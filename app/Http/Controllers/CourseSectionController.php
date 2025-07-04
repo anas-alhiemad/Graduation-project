@@ -14,6 +14,7 @@ use App\Services\CourseSectionServices\UpdateCourseSectionService;
 use App\Services\CourseSectionServices\DisplayCourseSectionService;
 use App\Http\Requests\CourseSectionRequest\CreateCourseSectionRequest;
 use App\Http\Requests\CourseSectionRequest\UpdateCourseSectionRequest;
+use App\Services\CourseSectionServices\CourseSectionProgressService;
 
 class CourseSectionController extends Controller
 {
@@ -23,8 +24,8 @@ class CourseSectionController extends Controller
     protected $deleteCourseSectionService;
     protected $sectionStudentService;
     protected $sectionTrainerService;
-
-    public function __construct(CreateCourseSectionService $createCourseSectionService,UpdateCourseSectionService $updatecourseSectionService,DisplayCourseSectionService $displayCourseSectionService,DeleteCourseSectionService $deleteCourseSectionService,SectionStudentService $sectionStudentService,SectionTrainerService $sectionTrainerService)
+    protected $progressService;
+    public function __construct(CreateCourseSectionService $createCourseSectionService,UpdateCourseSectionService $updatecourseSectionService,DisplayCourseSectionService $displayCourseSectionService,DeleteCourseSectionService $deleteCourseSectionService,SectionStudentService $sectionStudentService,SectionTrainerService $sectionTrainerService,   CourseSectionProgressService $progressService)
     {
         $this->createCourseSectionService = $createCourseSectionService;
         $this->updatecourseSectionService = $updatecourseSectionService;
@@ -32,6 +33,7 @@ class CourseSectionController extends Controller
         $this->deleteCourseSectionService = $deleteCourseSectionService;
         $this->sectionStudentService = $sectionStudentService;
         $this->sectionTrainerService = $sectionTrainerService;
+         $this->progressService = $progressService; 
     }
 
     public function ShowAllCourseSection($courseId) 
@@ -133,4 +135,21 @@ class CourseSectionController extends Controller
     {
         return $this->sectionStudentService->getStudentCoursesFinshed();
     }
+   public function showProgress($sectionId)
+{
+    try {
+        $progress = $this->progressService->calculateProgress($sectionId);
+
+        return response()->json([
+            'message' => 'Section progress retrieved successfully',
+            'progress_percentage' => $progress,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => $e->getMessage(),
+        ], 404);
+    }
+}
+
+    
 }

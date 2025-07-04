@@ -47,7 +47,7 @@ class UpdateCourseSectionService
     return response()->json([
         'message' => 'The section has been created successfully',
         'data'    => $section->only([
-            'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state' ,'courseId', 'created_at', 'updated_at'
+            'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state' ,'courseId', 'total_sessions', 'created_at', 'updated_at'
         ]) + [
             'week_days' => $section->formatted_week_days,
         ],
