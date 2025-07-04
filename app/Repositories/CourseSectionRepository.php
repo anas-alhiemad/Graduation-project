@@ -91,4 +91,12 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
                 ->where('is_confirmed', true);
         })->with(['course', 'weekDays'])->get();
     }
+
+    public function findWithSessionsAndAttendances($id)
+{
+    return $this->model
+        ->with('sessions.attendances')
+        ->find($id);
+}
+
 }

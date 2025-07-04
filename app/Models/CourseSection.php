@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class CourseSection extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','seatsOfNumber','reservedSeats','state','startDate','endDate','courseId'];
+    protected $fillable = ['name','seatsOfNumber','reservedSeats','state','startDate','endDate','courseId',
+    'total_sessions'];
 
 
     public function course()
@@ -71,5 +72,23 @@ class CourseSection extends Model
     {
         return $this->hasMany(Quiz::class,'course_section_id');
     }
+    public function sessions()
+{
+    return $this->hasMany(Session::class, 'course_section_id');
+}
+ public function progressPercentage(): float
+    {
+        $totalSessions = $this->total_sessions; 
 
+        if ($totalSessions == 0) {
+            return 0;
+        }
+
+        
+        $completedSessions = $this->sessions()
+            ->whereHas('attendances')
+            ->count();
+
+        return round(($completedSessions / $totalSessions) * 100, 2);
+    }
 }

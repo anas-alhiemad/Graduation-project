@@ -30,6 +30,8 @@ class CreateCourseSectionRequest extends FormRequest
             'days.*.start_time'  => 'required|date_format:H:i',
             'days.*.end_time'    => 'required|date_format:H:i|after:days.*.start_time',   
             'courseId' => 'required|exists:courses,id',
+            'total_sessions' => 'required|integer|min:1',
+
         ];
     }
 }
