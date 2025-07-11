@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\adminServices;
+namespace App\Services\AdminServices;
 
 use App\Models\Student;
 use App\Models\Secretary;
