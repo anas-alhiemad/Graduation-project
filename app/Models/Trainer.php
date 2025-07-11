@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Notification;
 use App\Models\CourseSection;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -60,5 +61,10 @@ class Trainer extends Authenticatable implements JWTSubject
     {
         return $this->belongsToMany(CourseSection::class, 'section_trainers')
                     ->withTimestamps();
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 }

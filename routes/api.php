@@ -4,15 +4,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AdController;
+use App\Http\Controllers\ExamController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\ForumController;
+use App\Http\Controllers\GradeController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\AuthAdminController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\ExamGradeController;
+use App\Http\Controllers\SectionQAController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\AuthStudentController;
@@ -21,7 +27,9 @@ use App\Http\Controllers\CRUDStudentController;
 use App\Http\Controllers\CRUDTrainerController;
 use App\Http\Controllers\DisplayStudentService;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\SavedCourseController;
 use App\Http\Controllers\CRUDEmployeeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\AuthSecretaryController;
 use App\Http\Controllers\CourseSectionController;
 use App\Http\Controllers\DisplaySecretaryService;
@@ -33,16 +41,9 @@ use App\Http\Controllers\TrainerRatingController;
 use App\Http\Controllers\SecretaryPointsController;
 use App\Http\Controllers\PointsManagementController;
 use App\Http\Controllers\FunctionSecretaryController;
-use App\Http\Controllers\SectionStudentSearchController;
-use App\Http\Controllers\SectionQAController;
-use App\Http\Controllers\StudentController;
-use App\Http\Controllers\TrainerController;
-use App\Http\Controllers\ExamController;
-use App\Http\Controllers\GradeController;
-use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SessionAttendanceController;
-use App\Http\Controllers\SavedCourseController;
 use App\Http\Controllers\CourseRecommendationController;
+use App\Http\Controllers\SectionStudentSearchController;
 
 
 
@@ -378,10 +379,14 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/events
     Route::get('/getMyScheduleByDay/{name_day}', [CourseSectionController::class, 'GetMyScheduleByDayTrainer']);
 });
 
+################################# Notification ROUTES ##########################
+
+Route::group(['middleware' => ['api','auth:student'],'prefix' => 'notifications'], function () {
+    Route::get('/indexNotifications', [NotificationController::class, 'IndexNotifications']);
+});
+
+
 ################################# FORUM ROUTES ##########################
-
-
-
 
 // Forum QA Routes
 Route::group(['middleware' => ['api', 'auth:trainer,student'], 'prefix' => 'forum'], function () {
@@ -529,3 +534,7 @@ Route::group(['middleware' => ['api', 'auth:student']], function () {
     Route::get('/saved-courses/count', [SavedCourseController::class, 'getSavedCoursesCount']);
 });
 
+
+
+
+    Route::post('/sendNot', [AuthAdminController::class, 'sendNotification']);
