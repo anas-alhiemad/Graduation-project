@@ -15,6 +15,7 @@ use App\Services\CourseSectionServices\DisplayCourseSectionService;
 use App\Http\Requests\CourseSectionRequest\CreateCourseSectionRequest;
 use App\Http\Requests\CourseSectionRequest\UpdateCourseSectionRequest;
 use App\Services\CourseSectionServices\CourseSectionProgressService;
+use App\Services\CourseSectionServices\SecretaryArchiveService;
 
 class CourseSectionController extends Controller
 {
@@ -25,7 +26,7 @@ class CourseSectionController extends Controller
     protected $sectionStudentService;
     protected $sectionTrainerService;
     protected $progressService;
-    public function __construct(CreateCourseSectionService $createCourseSectionService,UpdateCourseSectionService $updatecourseSectionService,DisplayCourseSectionService $displayCourseSectionService,DeleteCourseSectionService $deleteCourseSectionService,SectionStudentService $sectionStudentService,SectionTrainerService $sectionTrainerService,   CourseSectionProgressService $progressService)
+    public function __construct(CreateCourseSectionService $createCourseSectionService,UpdateCourseSectionService $updatecourseSectionService,DisplayCourseSectionService $displayCourseSectionService,DeleteCourseSectionService $deleteCourseSectionService,SectionStudentService $sectionStudentService,SectionTrainerService $sectionTrainerService,   CourseSectionProgressService $progressService, SecretaryArchiveService $secretaryArchiveService,)
     {
         $this->createCourseSectionService = $createCourseSectionService;
         $this->updatecourseSectionService = $updatecourseSectionService;
@@ -33,7 +34,8 @@ class CourseSectionController extends Controller
         $this->deleteCourseSectionService = $deleteCourseSectionService;
         $this->sectionStudentService = $sectionStudentService;
         $this->sectionTrainerService = $sectionTrainerService;
-         $this->progressService = $progressService; 
+        $this->progressService = $progressService; 
+        $this->secretaryArchiveService = $secretaryArchiveService;     
     }
 
     public function ShowAllCourseSection($courseId) 
@@ -150,6 +152,14 @@ class CourseSectionController extends Controller
         ], 404);
     }
 }
+public function getStudentArchiveBySecretary($studentId)
+{
+    return $this->secretaryArchiveService->getArchivedCoursesForStudent($studentId);
+}
 
+public function getTrainerArchiveBySecretary($trainerId)
+{
+    return $this->secretaryArchiveService->getArchivedCoursesForTrainer($trainerId);
+}
     
 }
