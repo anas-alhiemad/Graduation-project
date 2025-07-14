@@ -310,7 +310,10 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
     Route::post('/registerTrainerToSection', [CourseSectionController::class, 'RegisterTrainerToSection']);
     Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
     Route::post('/deleteTrainerFromSection', [CourseSectionController::class, 'DeleteTrainerFromSection']);
+    Route::get('/getStudentArchive/{studentId}', [CourseSectionController::class, 'getStudentArchiveBySecretary']);
+    Route::get('/getTrainerArchive/{trainerId}', [CourseSectionController::class, 'getTrainerArchiveBySecretary']);
 });
+
 
 
 Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'section'], function () {

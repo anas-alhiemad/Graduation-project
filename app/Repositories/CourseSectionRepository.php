@@ -99,4 +99,27 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
         ->find($id);
 }
 
+public function getStudentCoursesFinishedById($studentId)
+{
+    return $this->model
+        ->where('state', 'finished')
+        ->whereHas('students', function ($query) use ($studentId) {
+            $query->where('student_id', $studentId)
+                  ->where('is_confirmed', true);
+        })
+        ->with(['course', 'weekDays'])
+        ->paginate(10);
+}
+
+public function getTrainerCoursesFinishedById($trainerId)
+{
+    return $this->model
+        ->where('state', 'finished')
+        ->whereHas('trainers', function ($query) use ($trainerId) {
+            $query->where('trainer_id', $trainerId);
+        })
+        ->with(['course', 'weekDays'])
+        ->paginate(10);
+}
+
 }
