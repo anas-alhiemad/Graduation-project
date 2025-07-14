@@ -15,7 +15,7 @@ class Complaint extends Model
         'student_id'
     ];
 
-    // Relationship with Student
+    
     public function student()
     {
         return $this->belongsTo(Student::class);

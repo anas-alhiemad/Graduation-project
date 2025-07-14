@@ -20,15 +20,15 @@ class CourseRecommendationService
 
     public function getRecommendations($studentId)
     {
-        // جلب كل الكورسات التي سجل فيها الطالب فعليًا
+        
         $studentCourses = $this->courseSectionRepository
             ->getStudentCourses($studentId)
             ->pluck('course');
 
-        // استخراج كل الأقسام التي درس فيها الطالب
+    
         $departmentIds = $studentCourses->pluck('department.id')->unique();
 
-        // استخراج كل الكورسات الأخرى في نفس الأقسام، واستثناء التي درسها الطالب
+        
         $recommendedCourses = $this->courseRepository
             ->getCoursesByDepartmentIds($departmentIds)
             ->whereNotIn('id', $studentCourses->pluck('id'))
@@ -44,13 +44,13 @@ class CourseRecommendationService
 
 public function getRecommendationsFromSaved($studentId)
 {
-    // جلب الكورسات التي حفظها الطالب مع الأقسام
+    
     $savedCourses = Student::with('savedCourses.department')->findOrFail($studentId)->savedCourses;
 
-    // جلب أقسام الكورسات المحفوظة
+    
     $departmentIds = $savedCourses->pluck('department.id')->unique();
 
-    // جلب كورسات من نفس الأقسام، غير محفوظة
+    
     $recommendedCourses = $this->courseRepository
         ->getCoursesByDepartmentIds($departmentIds)
         ->whereNotIn('id', $savedCourses->pluck('id'))

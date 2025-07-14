@@ -17,7 +17,7 @@ class Course extends Model
         'department_id'
     ];
 
-    // Relationship with Department
+   
     public function department()
     {
         return $this->belongsTo(Department::class);
@@ -28,7 +28,6 @@ class Course extends Model
         return $this->hasMany(CourseSection::class,'courseId');
     }
 
-    // Relationship with students who saved this course
     public function savedByStudents()
     {
         return $this->belongsToMany(Student::class, 'saved_courses')

@@ -91,7 +91,6 @@ class SectionStudentService
     {
        $section = $this->courseSectionRepository->getById($request->course_section_id); 
        $section->students()->detach($request->student_id);
-    //    $this->sectionStudentRepository->removeStudentFromSection($request->course_section_id,$request->student_id) ;
        $this->courseSectionRepository->decrementSeat($request->course_section_id);
         return response()->json(['message' => 'Student removed from section']);
     }
@@ -123,10 +122,10 @@ class SectionStudentService
             throw new \Exception('Only trainers can search for students in their sections');
         }
 
-        // Get all sections where the trainer is assigned
+        
         $trainerSections = $trainer->sections()->pluck('course_sections.id');
 
-        // Search for students in those sections
+        
         return Student::whereHas('sections', function ($query) use ($trainerSections) {
                 $query->whereIn('course_sections.id', $trainerSections);
             })
@@ -150,12 +149,12 @@ class SectionStudentService
             throw new \Exception('Only trainers can search for students in their sections');
         }
 
-        // Verify trainer is assigned to this section
+        
         if (!$section->trainers()->where('trainers.id', $trainer->id)->exists()) {
             throw new \Exception('You are not authorized to search in this section');
         }
 
-        // Search for students in the specific section
+    
         return Student::whereHas('sections', function ($query) use ($section) {
                 $query->where('course_sections.id', $section->id);
             })
@@ -179,22 +178,21 @@ class SectionStudentService
             throw new \Exception('Only trainers can view student details');
         }
 
-        // Verify trainer is assigned to this section
+        
         if (!$section->trainers()->where('trainers.id', $trainer->id)->exists()) {
             throw new \Exception('You are not authorized to view details in this section');
         }
 
-        // Verify student is in this section
+        
         if (!$section->students()->where('students.id', $student->id)->exists()) {
             throw new \Exception('Student is not enrolled in this section');
         }
 
-        // Get student's attendance records
+        
         $attendance = $student->attendance()
             ->where('section_id', $section->id)
             ->get();
 
-        // Get student's exam grades
         $grades = $student->examGrades()
             ->where('section_id', $section->id)
             ->get();

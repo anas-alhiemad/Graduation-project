@@ -19,7 +19,7 @@ return new class extends Migration
             $table->decimal('grade', 5, 2);
             $table->timestamps();
 
-            // Ensure a student can only have one grade per exam
+            
             $table->unique(['student_id', 'exam_id']);
         });
     }

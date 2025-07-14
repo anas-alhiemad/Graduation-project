@@ -38,7 +38,7 @@ class CourseRequest extends FormRequest
         $validator->after(function ($validator) {
             $allowedFields = ['name', 'description', 'photo', 'state', 'department_id'];
             
-            // Debug the incoming data
+            
             \Log::info('Course Update Request Data:', [
                 'all_data' => $this->all(),
                 'has_name' => $this->has('name'),
