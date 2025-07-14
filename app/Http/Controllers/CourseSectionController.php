@@ -137,21 +137,11 @@ class CourseSectionController extends Controller
     {
         return $this->sectionStudentService->getStudentCoursesFinshed();
     }
-   public function showProgress($sectionId)
+public function showProgress($sectionId)
 {
-    try {
-        $progress = $this->progressService->calculateProgress($sectionId);
-
-        return response()->json([
-            'message' => 'Section progress retrieved successfully',
-            'progress_percentage' => $progress,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => $e->getMessage(),
-        ], 404);
-    }
+    return $this->progressService->getSectionProgress($sectionId);
 }
+
 public function getStudentArchiveBySecretary($studentId)
 {
     return $this->secretaryArchiveService->getArchivedCoursesForStudent($studentId);

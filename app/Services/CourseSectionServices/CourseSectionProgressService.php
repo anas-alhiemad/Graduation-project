@@ -33,5 +33,22 @@ class CourseSectionProgressService
 
         return round(($completedSessions / $totalSessions) * 100, 2);
     }
+
+    public function getSectionProgress($sectionId): \Illuminate\Http\JsonResponse
+{
+    try {
+        $progress = $this->calculateProgress($sectionId);
+
+        return response()->json([
+            'message' => 'Section progress retrieved successfully',
+            'progress_percentage' => $progress,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => $e->getMessage(),
+        ], 404);
+    }
+}
+
 }
  

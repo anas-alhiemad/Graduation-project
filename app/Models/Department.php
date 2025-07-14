@@ -14,7 +14,7 @@ class Department extends Model
         'photo'
     ];
 
-    // Relationship with Course
+    
     public function courses()
     {
         return $this->hasMany(Course::class);

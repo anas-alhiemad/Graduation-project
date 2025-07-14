@@ -15,7 +15,7 @@ return new class extends Migration
             $table->boolean('is_present')->default(false);
             $table->timestamps();
 
-            // Ensure a student can only have one attendance record per session
+            
             $table->unique(['session_id', 'student_id']);
         });
     }

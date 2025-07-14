@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             $table->timestamps();
 
-            // Ensure a student can't save the same course twice
+            
             $table->unique(['student_id', 'course_id']);
         });
     }

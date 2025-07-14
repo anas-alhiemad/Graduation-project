@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->timestamps();
 
-            // Ensure a student can only rate a trainer once per section
+            
             $table->unique(['student_id', 'trainer_id', 'course_section_id']);
         });
     }

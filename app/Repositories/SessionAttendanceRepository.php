@@ -78,7 +78,7 @@ class SessionAttendanceRepository
         return false;
     }
 
-    // Helper functions
+    
     public function getStudentAttendanceStats($studentId, $sectionId)
     {
         return $this->model
