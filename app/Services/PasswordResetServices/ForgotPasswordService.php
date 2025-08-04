@@ -46,11 +46,12 @@ class ForgotPasswordService
                     $user = $this->studentRepository->getByEmail($email);
                 
                 } elseif ($modelClass == \App\Models\Secretary::class) 
-                        {
-                        $user = $this->secretaryRepository->getByEmail($email);
-                                }   else {
+                {
+                    $user = $this->secretaryRepository->getByEmail($email);
+                
+                }   else {
                     
-                                $user = $this->trainerRepository->getByEmail($email);}
+                    $user = $this->trainerRepository->getByEmail($email);}
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Email not found'], 404);
         }

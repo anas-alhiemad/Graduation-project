@@ -53,9 +53,9 @@ class RegistrationSecretaryService
     {
         $secretary = $this->store($request);
         
-        $studentToken = $this->generateToken($secretary->email);
+        $secretary = $this->generateToken($secretary->email);
         
-        $this->SendEmail($studentToken);
+        $this->SendEmail($secretary);
         
         return response()->json(["Message"=>"Secretary has been successfully registered in the system","secretaryInfo"=>$secretary]);
 

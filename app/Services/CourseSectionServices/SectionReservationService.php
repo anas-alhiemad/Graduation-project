@@ -1,6 +1,7 @@
 <?php
 namespace App\Services\CourseSectionServices;
 
+use Illuminate\Support\Facades\DB;
 use App\Repositories\CourseSectionRepository;
 use App\Repositories\SectionStudentRepository;
 
@@ -17,24 +18,26 @@ class SectionReservationService
 
     public function createReservation($course_section_id) 
     {
-            $section = $this->courseSectionRepository->getById($course_section_id);
+        return DB::transaction(function () use ($course_section_id) {
+        $section = $this->courseSectionRepository->lockForUpdate($course_section_id);
 
         if ($section->reservedSeats >= $section->seatsOfNumber) {
             return response()->json(['message' => 'No available seats'], 400);
         }
 
-        $exists = $this->sectionStudentRepository->exists([
-            'course_section_id' => $course_section_id,
-            'student_id' => auth()->guard('student')->id()
-        ]);
-    
-        if ($exists) {
+        $studentId = auth()->guard('student')->id();
+        $courseId = $section->courseId;
+        $alreadyBooked = $this->sectionStudentRepository
+            ->exists($studentId, $courseId);
+        if ($alreadyBooked) {
             return response()->json(['message' => 'You have already booked here. You cannot book twice.'], 409);
         }
 
-        $section->students()->attach(auth()->guard('student')->id() , ['is_confirmed' => false]);        
+        $section->students()->attach(auth()->guard('student')->id(), ['is_confirmed' => false]);        
         $this->courseSectionRepository->incrementSeat($course_section_id);
+
         return response()->json(['message' => 'Your reservation has been successfully completed. Please pay within 48 hours.']);
+    });
     }
 
 

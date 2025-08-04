@@ -38,13 +38,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome, {{ $name }} 👋</h1>
+        <h1>Welcome, {{ $name }} </h1>
 
         <p>We're excited to let you know that you’ve been successfully added to our system.</p>
 
         <p>Please use the following code to verify your account:</p>
 
-        <p class="warning">⚠️ Do not give this code to anyone.</p>
+        <p class="warning"> Do not give this code to anyone.</p>
         
         <div class="code-box">{{ $verification_token }}</div>
 

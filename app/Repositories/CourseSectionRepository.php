@@ -122,4 +122,11 @@ public function getTrainerCoursesFinishedById($trainerId)
         ->paginate(10);
 }
 
+
+public function lockForUpdate($id)
+{
+    return CourseSection::where('id', $id)->lockForUpdate()->first();
+}
+
+
 }

@@ -19,9 +19,15 @@ class SectionStudentRepository extends BaseRepository implements RepositoryInter
      return true;
     }
 
-    public function exists(array $conditions)
+    public function exists($studentId, $courseId)
     {
-        return $this->model::where($conditions)->exists();
+        return $this->model::where('student_id',$studentId)
+            ->whereHas('courseSection', function ($query) use ($courseId) {
+                $query->where('courseId', $courseId)
+                    ->where('state', '!=', 'finished');
+            })
+            ->exists();
+        // return $this->model::where($conditions)->exists();
     }
 
     public function confirm($reservationId)

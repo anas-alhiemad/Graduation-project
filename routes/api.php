@@ -8,6 +8,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\GiftController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\TaskController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\CourseController;
@@ -303,13 +304,16 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
     Route::post('/deleteCourseSection/{sectionId}', [CourseSectionController::class, 'DeleteCourseSection']);
     Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
     Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
+   
     Route::post('/registerStudentToSection', [CourseSectionController::class, 'RegisterStudentToSection']);
     Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
     Route::get('/getStudentsInSectionConfirmed/{sectionId}', [CourseSectionController::class, 'GetStudentsInSectionConfirmed']);
     Route::post('/deleteStudentFromSection', [CourseSectionController::class, 'DeleteStudentFromSection']);
+   
     Route::post('/registerTrainerToSection', [CourseSectionController::class, 'RegisterTrainerToSection']);
     Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
     Route::post('/deleteTrainerFromSection', [CourseSectionController::class, 'DeleteTrainerFromSection']);
+   
     Route::get('/getStudentArchive/{studentId}', [CourseSectionController::class, 'getStudentArchiveBySecretary']);
     Route::get('/getTrainerArchive/{trainerId}', [CourseSectionController::class, 'getTrainerArchiveBySecretary']);
 });
@@ -382,10 +386,31 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'trainer/events
     Route::get('/getMyScheduleByDay/{name_day}', [CourseSectionController::class, 'GetMyScheduleByDayTrainer']);
 });
 
+
+################################# TASK ROUTES ##########################
+
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'secretary/task'], function () {
+    Route::post('/createTask', [TaskController::class, 'CreateTask']);
+    Route::get('/showTasksForAdmin', [TaskController::class, 'ShowTasksForAdmin']);
+    Route::get('/showTasksByIdSecretary/{secretary_id}', [TaskController::class, 'ShowTasksByIdSecretary']);
+    Route::post('/updateTask/{task_id}', [TaskController::class, 'UpdateTask']);
+    Route::post('/deleteTask/{task_id}', [TaskController::class, 'DeleteTask']);
+});
+
+Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary/task'], function () {
+    Route::post('/changeStatusTask/{task_id}', [TaskController::class, 'ChangeStatus']);
+    Route::get('/showMyTask', [TaskController::class, 'ShowMyTask']);
+});
+
+
 ################################# Notification ROUTES ##########################
 
 Route::group(['middleware' => ['api','auth:student'],'prefix' => 'notifications'], function () {
     Route::get('/indexNotifications', [NotificationController::class, 'IndexNotifications']);
+});
+
+Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'notifications'], function () {
+    Route::get('/indexNotificationsSecretary', [NotificationController::class, 'IndexNotifications']);
 });
 
 
@@ -471,7 +496,7 @@ Route::middleware(['auth:student'])->group(function () {
 Route::middleware(['auth:trainer'])->group(function () {
 
     Route::get('/trainer/profile', [TrainerController::class, 'getMyProfile']);
-       Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
+    Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
 });
 
 // Exam Routes
