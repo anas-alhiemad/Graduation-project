@@ -26,7 +26,7 @@ class CourseSectionController extends Controller
     protected $sectionStudentService;
     protected $sectionTrainerService;
     protected $progressService;
-    public function __construct(CreateCourseSectionService $createCourseSectionService,UpdateCourseSectionService $updatecourseSectionService,DisplayCourseSectionService $displayCourseSectionService,DeleteCourseSectionService $deleteCourseSectionService,SectionStudentService $sectionStudentService,SectionTrainerService $sectionTrainerService,   CourseSectionProgressService $progressService, SecretaryArchiveService $secretaryArchiveService,)
+    public function __construct(CreateCourseSectionService $createCourseSectionService,UpdateCourseSectionService $updatecourseSectionService,DisplayCourseSectionService $displayCourseSectionService,DeleteCourseSectionService $deleteCourseSectionService,SectionStudentService $sectionStudentService,SectionTrainerService $sectionTrainerService,   CourseSectionProgressService $progressService, SecretaryArchiveService $secretaryArchiveService)
     {
         $this->createCourseSectionService = $createCourseSectionService;
         $this->updatecourseSectionService = $updatecourseSectionService;

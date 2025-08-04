@@ -42,12 +42,12 @@ class SectionStudentService
             return response()->json(['message' => 'No available seats'], 400);
         }
 
-        $exists = $this->sectionStudentRepository->exists([
-            'course_section_id' => $request->course_section_id,
-            'student_id' => $request->student_id
-        ]);
+        $studentId = auth()->guard('student')->id();
+        $courseId = $section->courseId;
+        $alreadyBooked = $this->sectionStudentRepository
+            ->exists($studentId, $courseId);
     
-        if ($exists) {
+        if ($alreadyBooked) {
             return response()->json(['message' => 'Student already registered in this section'], 409);
         }
 
