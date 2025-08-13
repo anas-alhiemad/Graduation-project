@@ -301,6 +301,8 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' => 'secretary/section'], function () {
     Route::post('/createCourseSection', [CourseSectionController::class, 'CreateCourseSection']);
     Route::post('/updateCourseSection/{sectionId}', [CourseSectionController::class, 'UpdateCourseSection']);
+    Route::post('/changeStatusCourseSection/{sectionId}', [CourseSectionController::class, 'ChangeStatusCourseSection']);
+   
     Route::post('/deleteCourseSection/{sectionId}', [CourseSectionController::class, 'DeleteCourseSection']);
     Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
     Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
@@ -323,6 +325,12 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'section'], function () {
     Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
     Route::get('/showAllCourseSectionIsPending/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionPending']);
+});
+
+Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'section'], function () {
+
+    Route::get('/showAllCourseSectionInProgress/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionInProgress']);
+    Route::get('/showAllCourseSectionFinished/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionFinished']);
 });
 
 Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'trainer'], function () {
@@ -411,6 +419,10 @@ Route::group(['middleware' => ['api','auth:student'],'prefix' => 'notifications'
 
 Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'notifications'], function () {
     Route::get('/indexNotificationsSecretary', [NotificationController::class, 'IndexNotifications']);
+});
+
+Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'notifications'], function () {
+    Route::get('/indexNotificationsTrainer', [NotificationController::class, 'IndexNotifications']);
 });
 
 

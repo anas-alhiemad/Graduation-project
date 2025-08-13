@@ -22,6 +22,16 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
         return $this->model->with('weekDays','trainers')->where('courseId',$courseId)
                                              ->where('state',"pending")->paginate(10);
     }
+    public function getAllByCourseIdIsInProgress($courseId)
+    {
+        return $this->model->with('weekDays','trainers')->where('courseId',$courseId)
+                                             ->where('state',"in_progress")->paginate(10);
+    }
+    public function getAllByCourseIdIsFinished($courseId)
+    {
+        return $this->model->with('weekDays','trainers')->where('courseId',$courseId)
+                                             ->where('state',"finished")->paginate(10);
+    }
 
     public function incrementSeat($course_section_id)
     {
