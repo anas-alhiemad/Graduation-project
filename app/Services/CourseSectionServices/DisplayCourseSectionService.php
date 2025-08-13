@@ -31,9 +31,48 @@ class DisplayCourseSectionService
             "sections" => $formatted,
         ]);
     }
+
+    
     public function indexSectionPending($courseID)
     {
       return  $sections = $this->courseSectionRepository->getAllByCourseIdIspending($courseID);
+
+        $formatted = $sections->map(function ($section) {
+            return $section->only([
+                'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state','courseId', 'created_at', 'updated_at'
+            ]) + [
+                'week_days' => $section->formatted_week_days,
+            ];
+        });
+
+        return response()->json([
+            "message" => "All sections in the course.",
+            "sections" => $formatted,
+        ]);
+    }
+
+
+    public function indexSectionInProgress($courseID)
+    {
+      return  $sections = $this->courseSectionRepository->getAllByCourseIdIsInProgress($courseID);
+
+        $formatted = $sections->map(function ($section) {
+            return $section->only([
+                'id', 'name', 'seatsOfNumber', 'startDate', 'reservedSeats','endDate','state','courseId', 'created_at', 'updated_at'
+            ]) + [
+                'week_days' => $section->formatted_week_days,
+            ];
+        });
+
+        return response()->json([
+            "message" => "All sections in the course.",
+            "sections" => $formatted,
+        ]);
+    }
+
+    public function indexSectionFinished($courseID)
+    {
+      return  $sections = $this->courseSectionRepository->getAllByCourseIdIsFinished($courseID);
 
         $formatted = $sections->map(function ($section) {
             return $section->only([

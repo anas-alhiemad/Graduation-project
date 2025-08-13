@@ -6,16 +6,17 @@ use Illuminate\Http\Request;
 
 use App\Services\CourseSectionServices\SectionStudentService;
 use App\Services\CourseSectionServices\SectionTrainerService;
+use App\Services\CourseSectionServices\SecretaryArchiveService;
 use App\Http\Requests\CourseSectionRequest\SectionStudentRequest;
 use App\Http\Requests\CourseSectionRequest\SectionTrainertRequest;
 use App\Services\CourseSectionServices\CreateCourseSectionService;
 use App\Services\CourseSectionServices\DeleteCourseSectionService;
 use App\Services\CourseSectionServices\UpdateCourseSectionService;
 use App\Services\CourseSectionServices\DisplayCourseSectionService;
+use App\Services\CourseSectionServices\CourseSectionProgressService;
 use App\Http\Requests\CourseSectionRequest\CreateCourseSectionRequest;
 use App\Http\Requests\CourseSectionRequest\UpdateCourseSectionRequest;
-use App\Services\CourseSectionServices\CourseSectionProgressService;
-use App\Services\CourseSectionServices\SecretaryArchiveService;
+use App\Http\Requests\CourseSectionRequest\UpdateStatusCourseSectionRequest;
 
 class CourseSectionController extends Controller
 {
@@ -46,6 +47,14 @@ class CourseSectionController extends Controller
     {
         return $this->displayCourseSectionService->indexSectionPending($courseId);
     }
+    public function ShowAllCourseSectionInProgress($courseId) 
+    {
+        return $this->displayCourseSectionService->indexSectionInProgress($courseId);
+    }
+    public function ShowAllCourseSectionFinished($courseId) 
+    {
+        return $this->displayCourseSectionService->indexSectionFinished($courseId);
+    }
     public function ShowByIdCourseSection($sectionId) 
     {
         return $this->displayCourseSectionService->getSectionById($sectionId);
@@ -57,6 +66,11 @@ class CourseSectionController extends Controller
     public function UpdateCourseSection($sectionId,UpdateCourseSectionRequest $request) 
     {
         return $this->updatecourseSectionService->updateSection($sectionId,$request);
+    }
+    public function ChangeStatusCourseSection($sectionId,UpdateStatusCourseSectionRequest $request) 
+    {
+        $newStatus = $request->input('state');
+        return $this->updatecourseSectionService->updateStatus($sectionId,$newStatus);
     }
     public function DeleteCourseSection($sectionId) 
     {
