@@ -96,13 +96,39 @@ class SectionStudentService
     }
 
     public function getStudentCourses($studentId)
-    {
-        $courses = $this->courseSectionRepository->getStudentCourses($studentId);
-        return response()->json([
-            'message' => "Courses that student is enrolled in",
-            'courses' => $courses
-        ]);
-    }
+{
+
+    $sections = $this->courseSectionRepository->getStudentCourses($studentId);
+
+    
+    $formatted = $sections->map(function ($section) use ($studentId) {
+        $exams = $section->exams; 
+        $grades = [];
+
+        foreach ($exams as $exam) {
+    
+            $grade = $exam->grades()->where('student_id', $studentId)->first();
+            $grades[] = [
+                'exam_id' => $exam->id,
+                'exam_name' => $exam->name,
+                'grade' => $grade ? $grade->grade : null,
+            ];
+        }
+
+        return $section->only([
+            'id', 'name', 'seatsOfNumber', 'reservedSeats', 'startDate', 'endDate', 'state', 'courseId'
+        ]) + [
+            'week_days' => $section->formatted_week_days,
+            'grades' => $grades,
+        ];
+    });
+
+    return response()->json([
+        'message' => 'Student courses with grades retrieved successfully',
+        'sections' => $formatted,
+    ]);
+}
+
 
     public function getStudentCoursesFinshed()
     {

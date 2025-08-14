@@ -91,4 +91,9 @@ class CourseSection extends Model
 
         return round(($completedSessions / $totalSessions) * 100, 2);
     }
+    public function exams()
+{
+    return $this->hasMany(Exam::class, 'course_section_id');
+}
+
 }
