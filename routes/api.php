@@ -202,10 +202,11 @@ Route::group(['middleware' => ['api','auth:student','transaction'],'prefix' => '
     Route::get('/courses/{id}', [CourseController::class, 'show']);
     Route::get('/searchCourses/{query}', [CourseController::class, 'search']);
     Route::get('/my-courses', [CourseSectionController::class, 'getStudentCourses']);
+    Route::get('/getMyCourseIsFinished', [CourseSectionController::class, 'GetCourseIsFinished']);
     Route::get('/departments/{departmentId}', [CourseController::class, 'getByDepartment']);
     Route::get('/points', [StudentPointsController::class, 'getPoints']);
-     Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
-        Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
+    Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
+    Route::get('/departments/{departmentId}/courses', [CourseController::class, 'getByDepartment']);
      Route::get('/recommendations', [CourseRecommendationController::class, 'getRecommendations']);
       Route::get('/recommended-from-saved', [CourseRecommendationController::class, 'getRecommendationsFromSaved']);
 
