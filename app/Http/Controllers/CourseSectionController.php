@@ -147,23 +147,23 @@ class CourseSectionController extends Controller
         return $this->sectionTrainerService->indexTrainerWithCourse();
     }
 
-    public function GetCourseIsFinshed() 
+    public function GetCourseIsFinished() 
     {
-        return $this->sectionStudentService->getStudentCoursesFinshed();
+        return $this->sectionStudentService->getStudentCoursesFinished();
     }
-public function showProgress($sectionId)
-{
-    return $this->progressService->getSectionProgress($sectionId);
-}
+    public function showProgress($sectionId)
+    {
+        return $this->progressService->getSectionProgress($sectionId);
+    }
 
-public function getStudentArchiveBySecretary($studentId)
-{
-    return $this->secretaryArchiveService->getArchivedCoursesForStudent($studentId);
-}
+    public function getStudentArchiveBySecretary($studentId)
+    {
+        return $this->secretaryArchiveService->getArchivedCoursesForStudent($studentId);
+    }
 
-public function getTrainerArchiveBySecretary($trainerId)
-{
-    return $this->secretaryArchiveService->getArchivedCoursesForTrainer($trainerId);
-}
+    public function getTrainerArchiveBySecretary($trainerId)
+    {
+        return $this->secretaryArchiveService->getArchivedCoursesForTrainer($trainerId);
+    }
     
 }

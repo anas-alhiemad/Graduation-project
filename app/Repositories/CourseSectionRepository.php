@@ -103,11 +103,11 @@ class CourseSectionRepository extends BaseRepository implements RepositoryInterf
     }
 
     public function findWithSessionsAndAttendances($id)
-{
-    return $this->model
-        ->with('sessions.attendances')
-        ->find($id);
-}
+    {
+        return $this->model
+            ->with('sessions.attendances')
+            ->find($id);
+    }
 
 public function getStudentCoursesFinishedById($studentId)
 {

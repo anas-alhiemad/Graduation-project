@@ -136,12 +136,12 @@ public function getStudentCourses($studentId, $perPage = 10) {
     ]);
 }
 
-    public function getStudentCoursesFinshed()
+    public function getStudentCoursesFinished()
     {
         $studentId = Auth::guard('student')->id();
         $courses = $this->courseSectionRepository->getStudentCoursesIsFinished($studentId);
         return response()->json([
-            'message' => "Courses that student is enrolled in",
+            'message' => "Courses that student Finished",
             'courses' => $courses
         ]);
     }
