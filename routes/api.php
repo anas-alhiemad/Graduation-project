@@ -45,7 +45,7 @@ use App\Http\Controllers\FunctionSecretaryController;
 use App\Http\Controllers\SessionAttendanceController;
 use App\Http\Controllers\CourseRecommendationController;
 use App\Http\Controllers\SectionStudentSearchController;
-
+use App\Http\Controllers\TrainerStatisticsController;
 
 
 /*
@@ -175,13 +175,14 @@ Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'ad
     Route::post('/deleteEmployee/{employeeId}', [CRUDEmployeeController::class, 'DeleteEmployee']);
 });
 
-// Admin View Trainers Only
+// Admin View Trainers Only &TrainerStatistics
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/trainer'], function () {
     Route::get('/showAllTrainer', [CRUDTrainerController::class, 'ShowAllTrainer']);
     Route::get('/showTrainerById/{trainerId}', [CRUDTrainerController::class, 'ShowTrainerById']);
     Route::get('/searchTrainer/{querySearch}', [CRUDTrainerController::class, 'SearchTrainer']);
     Route::get('/indexTrainerWithCourse', [CourseSectionController::class, 'IndexTrainerWithCourse']);
     Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
+    Route::get('/statistics', [TrainerStatisticsController::class, 'index']);
 });
 
 // Admin View Students Only
@@ -280,6 +281,7 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 Route::group(['middleware' => ['api','Auth_admin_or_secretary','transaction'],'prefix' => 'secretary/student'], function () {
     Route::get('/showAllStudent', [CRUDStudentController::class, 'ShowAllStudent']);
     Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
+
     Route::post('/updateStudent/{studentId}', [CRUDStudentController::class, 'UpdateStudent']);
     Route::get('/searchStudent/{querySearch}', [CRUDStudentController::class, 'SearchStudent']);
     Route::post('/deleteStudent/{studentId}', [CRUDStudentController::class, 'DeleteStudent']);

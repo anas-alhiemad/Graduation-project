@@ -8,9 +8,29 @@ use App\Models\CourseSection;
 use App\Models\TrainerRating;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
+use App\Repositories\TrainerRatingRepository;
 class TrainerRatingService
 {
+    protected $trainerRatingRepository;
+
+    public function __construct(TrainerRatingRepository $trainerRatingRepository)
+    {
+        $this->trainerRatingRepository = $trainerRatingRepository;
+    }
+
+    public function getTrainersStatistics($startDate = null, $endDate = null, $limit = null)
+    {
+        $stats = $this->trainerRatingRepository->getTrainerRatingsStatistics($startDate, $endDate, $limit);
+
+        return $stats->map(function ($row) {
+            return [
+                'trainer_id'     => $row->trainer_id,
+                'trainer_name'   => $row->trainer->name ?? 'N/A',
+                'average_rating' => round($row->average_rating, 2),
+                'total_ratings'  => $row->total_ratings,
+            ];
+        });
+    }
     public function rateTrainer($trainerId, $sectionId, $rating, $comment = null)
     {
         $student = Auth::user();
