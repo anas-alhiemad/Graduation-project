@@ -95,40 +95,46 @@ class SectionStudentService
         return response()->json(['message' => 'Student removed from section']);
     }
 
-    public function getStudentCourses($studentId)
-{
-
+public function getStudentCourses($studentId, $perPage = 10) {
     $sections = $this->courseSectionRepository->getStudentCourses($studentId);
 
-    
-    $formatted = $sections->map(function ($section) use ($studentId) {
-        $exams = $section->exams; 
-        $grades = [];
+    // تحويل Collection إلى Paginator
+    $page = request()->input('page', 1);
+    $paginatedSections = $sections->forPage($page, $perPage);
 
-        foreach ($exams as $exam) {
-    
-            $grade = $exam->grades()->where('student_id', $studentId)->first();
-            $grades[] = [
+    $formatted = $paginatedSections->map(function($section) use ($studentId) {
+        $exams = $section->exams->map(function($exam) use ($studentId) {
+            $grade = $exam->grades->where('student_id', $studentId)->first();
+            return [
                 'exam_id' => $exam->id,
                 'exam_name' => $exam->name,
-                'grade' => $grade ? $grade->grade : null,
+                'exam_date' => $exam->exam_date,
+                'grade' => $grade ? $grade->grade : null
             ];
-        }
+        });
 
-        return $section->only([
-            'id', 'name', 'seatsOfNumber', 'reservedSeats', 'startDate', 'endDate', 'state', 'courseId'
-        ]) + [
-            'week_days' => $section->formatted_week_days,
-            'grades' => $grades,
+        return [
+            'section_id' => $section->id,
+            'section_name' => $section->name,
+            'course' => $section->course,
+            'weekDays' => $section->getFormattedWeekDaysAttribute(),
+            'exams' => $exams
         ];
     });
 
+    $total = $sections->count();
+
     return response()->json([
-        'message' => 'Student courses with grades retrieved successfully',
-        'sections' => $formatted,
+        'message' => "Courses that student is enrolled in with grades",
+        'courses' => $formatted,
+        'pagination' => [
+            'total' => $total,
+            'per_page' => $perPage,
+            'current_page' => (int) $page,
+            'last_page' => ceil($total / $perPage)
+        ]
     ]);
 }
-
 
     public function getStudentCoursesFinshed()
     {
