@@ -160,9 +160,12 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], functio
 });
 
 // Admin Advertisement Management
+// Admin Advertisement Management
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
+    Route::get('ads/active', [AdController::class, 'active']);
     Route::apiResource('ads', AdController::class)->except(['update']);
     Route::post('ads/{id}', [AdController::class, 'update']);
+   
 });
 
 // Admin Employee Management
