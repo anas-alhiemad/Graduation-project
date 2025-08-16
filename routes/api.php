@@ -46,8 +46,7 @@ use App\Http\Controllers\SessionAttendanceController;
 use App\Http\Controllers\CourseRecommendationController;
 use App\Http\Controllers\SectionStudentSearchController;
 use App\Http\Controllers\TrainerStatisticsController;
-
-
+use App\Http\Controllers\SectionStatisticsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -159,8 +158,7 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], functio
     Route::delete('gifts/{id}', [GiftController::class, 'destroy']);
 });
 
-// Admin Advertisement Management
-// Admin Advertisement Management
+// Admin AdS Management
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
     Route::get('ads/active', [AdController::class, 'active']);
     Route::apiResource('ads', AdController::class)->except(['update']);
@@ -178,7 +176,7 @@ Route::group(['middleware' => ['api','auth:admin','transaction'],'prefix' => 'ad
     Route::post('/deleteEmployee/{employeeId}', [CRUDEmployeeController::class, 'DeleteEmployee']);
 });
 
-// Admin View Trainers Only &TrainerStatistics
+// Admin View Trainers Only &SectionStatistic&TrainerStatistics
 Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/trainer'], function () {
     Route::get('/showAllTrainer', [CRUDTrainerController::class, 'ShowAllTrainer']);
     Route::get('/showTrainerById/{trainerId}', [CRUDTrainerController::class, 'ShowTrainerById']);
@@ -186,6 +184,7 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/trainer'],
     Route::get('/indexTrainerWithCourse', [CourseSectionController::class, 'IndexTrainerWithCourse']);
     Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
     Route::get('/statistics', [TrainerStatisticsController::class, 'index']);
+    Route::get('/section-statistics', [SectionStatisticsController::class, 'index']);
 });
 
 // Admin View Students Only

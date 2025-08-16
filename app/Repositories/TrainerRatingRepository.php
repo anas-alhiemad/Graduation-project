@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\TrainerRating;
 use Illuminate\Support\Facades\DB;
+
 class TrainerRatingRepository
 {
     protected $model;
@@ -53,15 +54,14 @@ class TrainerRatingRepository
             ->with('trainer:id,name')
             ->groupBy('trainer_id');
 
-        // فلترة بالتاريخ إذا محدد
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-        // ترتيب من الأعلى تقييمًا
+        
         $query->orderByDesc('average_rating');
 
-        // تحديد عدد النتائج إذا مطلوب
+        
         if ($limit) {
             $query->limit($limit);
         }

@@ -4,9 +4,16 @@ namespace App\Services\EvaluationServices;
 use App\Models\SectionRating;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\SectionRatingRepository;
 
 class SectionRatingService
 {
+    protected $sectionRatingRepository;
+public function __construct(SectionRatingRepository $sectionRatingRepository)
+{
+    $this->sectionRatingRepository = $sectionRatingRepository;
+}
+
     public function rateSection($sectionId, $rating, $comment = null)
     {
         $student = Auth::user();
@@ -49,4 +56,17 @@ class SectionRatingService
         return SectionRating::where('course_section_id', $sectionId)
             ->avg('rating');
     }
+     public function getSectionsStatistics($startDate = null, $endDate = null, $limit = null)
+    {
+        $stats = $this->sectionRatingRepository->getSectionsStatistics($startDate, $endDate, $limit);
+
+        return $stats->map(function ($row) {
+            return [
+                'section_id'     => $row->course_section_id,
+                'section_name'   => $row->courseSection->name ?? 'N/A',
+                'average_rating' => round($row->average_rating, 2),
+                'total_ratings'  => $row->total_ratings,
+            ];
+        });
+          }
 }
