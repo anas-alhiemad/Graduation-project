@@ -35,7 +35,7 @@ class SectionStudentService
 
     public function registerStudentToSection($request)
     {
-        // $sectionStudent =$request->all() ;
+        
         $section = $this->courseSectionRepository->getById($request->course_section_id);
 
         if ($section->reservedSeats >= $section->seatsOfNumber) {
@@ -98,7 +98,6 @@ class SectionStudentService
 public function getStudentCourses($studentId, $perPage = 10) {
     $sections = $this->courseSectionRepository->getStudentCourses($studentId);
 
-    // تحويل Collection إلى Paginator
     $page = request()->input('page', 1);
     $paginatedSections = $sections->forPage($page, $perPage);
 
