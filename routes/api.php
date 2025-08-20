@@ -428,6 +428,10 @@ Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'notification
     Route::get('/indexNotificationsSecretary', [NotificationController::class, 'IndexNotifications']);
 });
 
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'notifications'], function () {
+    Route::get('/indexNotificationsAdmin', [NotificationController::class, 'IndexNotifications']);
+});
+
 Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'notifications'], function () {
     Route::get('/indexNotificationsTrainer', [NotificationController::class, 'IndexNotifications']);
 });
