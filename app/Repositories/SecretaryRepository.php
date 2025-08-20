@@ -36,4 +36,9 @@ class SecretaryRepository extends BaseRepository implements RepositoryInterface
     {
         return $this->model->where('id', $secretaryId)->value('points');
     }
+
+    public function secretariesHaveFcmToken()
+    {
+        return $this->model->whereNotNull('fcm_token')->get();
+    }
 }
