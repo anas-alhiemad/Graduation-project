@@ -36,7 +36,7 @@ class CreateReportService
         foreach ($admins as $admin) {
                     if ($admin->fcm_token) {
                         $title = "New report uploaded";
-                        $body  = "A new report has been uploaded by: ".auth()->guard('secretary')->name;
+                        $body  = "A new report has been uploaded";
 
                         
                         $this->sendNotificationsService->sendByFcm($admin->fcm_token, [
