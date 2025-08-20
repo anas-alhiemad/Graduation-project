@@ -56,6 +56,9 @@ class StudentRepository extends BaseRepository implements RepositoryInterface
     {
         return $student->sections()->where('state','in_progress')->with(['course', 'weekDays'])->get();
     }
-
+    public function studentsHaveFcmToken()
+    {
+        return $this->model->whereNotNull('fcm_token')->get();
+    }
   
 }

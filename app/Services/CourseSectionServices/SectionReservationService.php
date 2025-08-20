@@ -2,18 +2,23 @@
 namespace App\Services\CourseSectionServices;
 
 use Illuminate\Support\Facades\DB;
+use App\Repositories\SecretaryRepository;
 use App\Repositories\CourseSectionRepository;
 use App\Repositories\SectionStudentRepository;
+use App\Services\NotificationServices\SendNotificationsService;
 
 class SectionReservationService 
 {
     protected $sectionStudentRepository;
     protected $courseSectionRepository;
-    
-    public function __construct(SectionStudentRepository  $sectionStudentRepository,CourseSectionRepository $courseSectionRepository)
+    protected $sendNotificationsService;
+    protected $secretaryRepository;
+    public function __construct(SectionStudentRepository  $sectionStudentRepository,CourseSectionRepository $courseSectionRepository,SendNotificationsService $sendNotificationsService,SecretaryRepository  $secretaryRepository)
     {
         $this->sectionStudentRepository = $sectionStudentRepository;
         $this->courseSectionRepository = $courseSectionRepository;
+        $this->sendNotificationsService = $sendNotificationsService;
+        $this->secretaryRepository = $secretaryRepository;
     }
 
     public function createReservation($course_section_id) 
@@ -35,9 +40,25 @@ class SectionReservationService
 
         $section->students()->attach(auth()->guard('student')->id(), ['is_confirmed' => false]);        
         $this->courseSectionRepository->incrementSeat($course_section_id);
+        
+        $secretaries = $this->secretaryRepository->secretariesHaveFcmToken();
+       
+        foreach ($secretaries as $secretary) 
+        {
+                if ($secretary->fcm_token) {
+                    $title = "New Booking";
+                    $body  = "A new booking has been made by: " . auth()->guard('student')->user()->name;
 
-        return response()->json(['message' => 'Your reservation has been successfully completed. Please pay within 48 hours.']);
-    });
+                    $this->sendNotificationsService->sendByFcm($secretary->fcm_token, [
+                        'title' => $title,
+                        'body' => $body,
+                    ]);
+
+                    $this->sendNotificationsService->storeNotification($secretary, $title, $body);
+                }
+        }
+       
+        return response()->json(['message' => 'Your reservation has been successfully completed. Please pay within 48 hours.']);});
     }
 
 
