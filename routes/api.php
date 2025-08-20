@@ -437,6 +437,10 @@ Route::group(['middleware' => ['api','auth:trainer'],'prefix' => 'notifications'
 });
 
 
+// Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'notifications'], function () {
+//     Route::get('/indexNotificationsAdmin', [NotificationController::class, 'IndexNotifications']);
+// });
+
 ################################# FORUM ROUTES ##########################
 
 // Forum QA Routes
