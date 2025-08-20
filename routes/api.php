@@ -47,6 +47,8 @@ use App\Http\Controllers\CourseRecommendationController;
 use App\Http\Controllers\SectionStudentSearchController;
 use App\Http\Controllers\TrainerStatisticsController;
 use App\Http\Controllers\SectionStatisticsController;
+use App\Http\Controllers\StudentStatisticsController;
+use App\Http\Controllers\CourseStatisticsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -578,8 +580,15 @@ Route::group(['middleware' => ['api', 'auth:student']], function () {
     Route::get('/saved-courses', [SavedCourseController::class, 'getMySavedCourses']);
     Route::get('/saved-courses/count', [SavedCourseController::class, 'getSavedCoursesCount']);
 });
-
-
+// StudentStatisticsMonthly&Yearly
+Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin/students'], function () {
+    Route::get('/statistics/monthly', [StudentStatisticsController::class, 'monthly']);
+    Route::get('/statistics/yearly', [StudentStatisticsController::class, 'yearly']);
+});
+//`CourseStatistics
+Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin/courses'], function () {
+    Route::get('/statistics/top-courses', [CourseStatisticsController::class, 'topCourses']);
+});
 
 
     Route::post('/sendNot', [AuthAdminController::class, 'sendNotification']);
