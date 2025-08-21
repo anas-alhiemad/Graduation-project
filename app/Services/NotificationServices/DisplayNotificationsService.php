@@ -8,7 +8,7 @@ class DisplayNotificationsService
 {
     public function getNotificationsForCurrentUser()
     {
-        $user = Auth::guard('student')->user() ?? Auth::guard('trainer')->user() ?? Auth::guard('secretary')->user();
+        $user = Auth::guard('student')->user() ?? Auth::guard('trainer')->user() ?? Auth::guard('secretary')->user() ?? Auth::guard('admin')->user();
 
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
