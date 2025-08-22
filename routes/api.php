@@ -329,6 +329,19 @@ Route::group(['middleware' => ['api','auth:secretary','transaction'],'prefix' =>
 
 
 
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin'], function () {
+    Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
+    Route::get('/showAllCourseSection/{courseId}', [CourseSectionController::class, 'ShowAllCourseSection']);
+    Route::get('/showAllCourseSectionIsPending/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionPending']);
+    Route::get('/getTrainersInSection/{sectionId}', [CourseSectionController::class, 'GetTrainersInSection']);
+    Route::get('/getStudentsInSectionConfirmed/{sectionId}', [CourseSectionController::class, 'GetStudentsInSectionConfirmed']);
+    Route::get('/showAllReservation/{section_id}', [ReservationController::class, 'ShowAllReservation']);
+  
+    Route::get('/showAllCourseSectionInProgress/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionInProgress']);
+    Route::get('/showAllCourseSectionFinished/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionFinished']);
+
+});
+
 Route::group(['middleware' => ['api','Auth_student_or_secretary','transaction'],'prefix' => 'section'], function () {
     Route::get('/ShowByIdCourseSection/{sectionId}', [CourseSectionController::class, 'ShowByIdCourseSection']);
     Route::get('/showAllCourseSectionIsPending/{courseId}', [CourseSectionController::class, 'ShowAllCourseSectionPending']);
