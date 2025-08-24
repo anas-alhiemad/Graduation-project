@@ -194,6 +194,8 @@ Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/student'],
     Route::get('/showAllStudent', [CRUDStudentController::class, 'ShowAllStudent']);
     Route::get('/showStudentById/{studentId}', [CRUDStudentController::class, 'ShowStudentById']);
     Route::get('/searchStudent/{querySearch}', [CRUDStudentController::class, 'SearchStudent']);
+      Route::get('/getStudentsInSection/{sectionId}', [CourseSectionController::class, 'GetStudentsInSection']);
+
 });
 
 ################################# STUDENT ROUTES ##########################
@@ -270,6 +272,7 @@ Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'],
 // Secretary Gift Access
 Route::group(['middleware' => ['api','auth:secretary'],'prefix' => 'secretary'], function () {
     Route::get('/gifts', [GiftController::class, 'secretaryGifts']);
+    Route::get('/gifts/{id}', [GiftController::class, 'show']);
 });
 
 // Secretary Student Management
@@ -606,5 +609,10 @@ Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin/courses']
     Route::get('/statistics/top-courses', [CourseStatisticsController::class, 'topCourses']);
 });
 
+// Admin Course Section Archive
+Route::group(['middleware' => ['api','auth:admin'],'prefix' => 'admin/section'], function () {
+    Route::get('/getStudentArchive/{studentId}', [CourseSectionController::class, 'getStudentArchiveBySecretary']);
+    Route::get('/getTrainerArchive/{trainerId}', [CourseSectionController::class, 'getTrainerArchiveBySecretary']);
+});
 
     Route::post('/sendNot', [AuthAdminController::class, 'sendNotification']);
