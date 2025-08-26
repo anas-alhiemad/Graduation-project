@@ -22,7 +22,7 @@ class UpdateStatusCourseSectionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'state' => 'required|string|in:pending,in_progress,completed,canceled',
+            'state' => 'required|string|in:pending,in_progress,completed',
         ];
     }
 }

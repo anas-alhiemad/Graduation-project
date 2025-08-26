@@ -3,16 +3,19 @@
 namespace App\Services\TaskServices;
 
 use App\Repositories\TaskRepository;
+use App\Repositories\SecretaryRepository;
 use App\Services\NotificationServices\SendNotificationsService;
 
 class UpdateTaskService
 {
     protected $taskRepository;
     protected $sendNotificationsService;
+    protected $secretaryRepository;
 
-    public function __construct(TaskRepository $taskRepository, SendNotificationsService $sendNotificationsService)
+    public function __construct(TaskRepository $taskRepository, SendNotificationsService $sendNotificationsService,SecretaryRepository  $secretaryRepository)
     {
         $this->taskRepository = $taskRepository;
+        $this->secretaryRepository = $secretaryRepository;
         $this->sendNotificationsService = $sendNotificationsService;
     }
 
@@ -49,6 +52,9 @@ class UpdateTaskService
             'status' => $newStatus
         ]);
 
+    if ($newStatus === 'completed') {
+        $this->secretaryRepository->incrementPoint(auth()->guard('secretary')->id());
+    }
         return response()->json([
             'message' => 'Task status updated successfully.',
             'task' => $task
