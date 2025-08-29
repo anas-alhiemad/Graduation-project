@@ -42,27 +42,31 @@ class SectionRatingRepository
     }
 
      public function getSectionsStatistics($startDate = null, $endDate = null, $limit = null)
-    {
-        $query = $this->model
-            ->select(
-                'course_section_id',
-                DB::raw('AVG(rating) as average_rating'),
-                DB::raw('COUNT(rating) as total_ratings')
-            )
-            ->with('courseSection:id,name')
-            ->groupBy('course_section_id');
+{
+  $query = $this->model
+    ->select(
+        'course_section_id',
+        DB::raw('AVG(rating) as average_rating'),
+        DB::raw('COUNT(rating) as total_ratings')
+    )
+    ->with(['courseSection' => function ($q) {
+        $q->select('id', 'name', 'courseId')
+          ->with(['course:id,name']);
+    }])
+    ->groupBy('course_section_id');
 
-        if ($startDate && $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
-
-        $query->orderByDesc('average_rating');
-
-        if ($limit) {
-            $query->limit($limit);
-        }
-
-        return $query->get();
+    if ($startDate && $endDate) {
+        $query->whereBetween('created_at', [$startDate, $endDate]);
     }
+
+    $query->orderByDesc('average_rating');
+
+    if ($limit) {
+        $query->limit($limit);
+    }
+
+    return $query->get();
+}
+
 
 }

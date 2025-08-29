@@ -56,17 +56,22 @@ public function __construct(SectionRatingRepository $sectionRatingRepository)
         return SectionRating::where('course_section_id', $sectionId)
             ->avg('rating');
     }
-     public function getSectionsStatistics($startDate = null, $endDate = null, $limit = null)
-    {
-        $stats = $this->sectionRatingRepository->getSectionsStatistics($startDate, $endDate, $limit);
+public function getSectionsStatistics($startDate = null, $endDate = null, $limit = null)
+{
+    $stats = $this->sectionRatingRepository->getSectionsStatistics($startDate, $endDate, $limit);
+return $stats->map(function ($row) {
+    return [
+        'section_id'     => $row->course_section_id,
+        'section_name'   => $row->courseSection->name ?? 'N/A',
+        'course_id'      => $row->courseSection->course->id ?? null,
+        'course_name'    => $row->courseSection->course->name ?? 'N/A',
+        'average_rating' => round($row->average_rating, 2),
+        'total_ratings'  => $row->total_ratings,
+    ];
+});
 
-        return $stats->map(function ($row) {
-            return [
-                'section_id'     => $row->course_section_id,
-                'section_name'   => $row->courseSection->name ?? 'N/A',
-                'average_rating' => round($row->average_rating, 2),
-                'total_ratings'  => $row->total_ratings,
-            ];
-        });
-          }
+    
+}
+
+
 }
